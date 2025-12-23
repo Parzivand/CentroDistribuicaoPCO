@@ -1,3 +1,5 @@
+package java.domain;
+
 public class Utilizador{
 
     // Atributos
@@ -24,6 +26,6 @@ public class Utilizador{
     public void setPassword(String password) { this.password = password; }
     
     public String getPermissoes() { return permissoes; }
-    public void setPermissoes(String permissoes) { this.permissoes =
+    public void setPermissoes(String permissoes) { this.permissoes = permissoes; }
 
 }

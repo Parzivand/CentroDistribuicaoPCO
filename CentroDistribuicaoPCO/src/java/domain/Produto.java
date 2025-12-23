@@ -1,3 +1,5 @@
+package java.domain;
+
 public class Produto{
 
     // Atributos
