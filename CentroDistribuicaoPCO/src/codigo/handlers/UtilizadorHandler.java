@@ -1,5 +1,6 @@
-import java.domain.Produto;
-import java.domain.Utilizador;
+package codigo.handlers;
+
+import codigo.domain.Utilizador;
 import java.util.*;
 public class UtilizadorHandler {
     private final List<Utilizador> utilizadores = new ArrayList<>();
