@@ -3,6 +3,7 @@ package java.domain;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,23 +13,50 @@ public class Produto{
 
     private String nome, SKU, unidadeMedida;
     private ArrayList<String> restricoes; // restricoes mudadas 
-    private Date  validade; // validade mudada para uma data 
+    private Date  validade;
+    private boolean vencido;
+    private HashSet<NaoConformidade> naoConformidade; // validade mudada para uma data 
 
     // Construtor
 
+    public Produto(String nome, String SKU, String unidadeMedida,ArrayList restricoes, Date validade,
+        HashSet naoConformidade) {
+        this.nome = nome;
+        this.SKU = SKU;
+        this.unidadeMedida = unidadeMedida;
+        this.restricoes = restricoes;
+        this.validade = validade;
+        this.vencido= false;
+        this.naoConformidade= naoConformidade;
+    
+    }
+    public Produto(String nome, String SKU, String unidadeMedida,ArrayList restricoes,
+        HashSet naoconformidades
+    ) {
+        this.nome = nome;
+        this.SKU = SKU;
+        this.unidadeMedida = unidadeMedida;
+        this.restricoes = restricoes;
+        this.validade = null;
+        this.naoConformidade=naoconformidades; 
+    }
     public Produto(String nome, String SKU, String unidadeMedida,ArrayList restricoes, Date validade) {
         this.nome = nome;
         this.SKU = SKU;
         this.unidadeMedida = unidadeMedida;
         this.restricoes = restricoes;
         this.validade = validade;
+        this.vencido= false;
+        this.naoConformidade= new HashSet<>() ;
+    
     }
     public Produto(String nome, String SKU, String unidadeMedida,ArrayList restricoes) {
         this.nome = nome;
         this.SKU = SKU;
         this.unidadeMedida = unidadeMedida;
         this.restricoes = restricoes;
-        this.validade = null;
+        this.naoConformidade= new HashSet<>() ;
+    
     }
 
     // Gets e Setters

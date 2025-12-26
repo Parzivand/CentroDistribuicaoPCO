@@ -24,6 +24,6 @@ public class Loja {
     public int getCodigo() { return codigo; }
     public void setCodigo(int codigo) { this.codigo = codigo; }
  public String toString(){
-    return String.format("morada: %s nome: %s",codigo,morada,nome);
+    return String.format("morada: %s nome: %s",morada,nome);
  }   
 }
