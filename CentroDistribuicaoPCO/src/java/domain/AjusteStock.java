@@ -18,6 +18,7 @@ public class AjusteStock {
         this.aprovacao = aprovacao;
         this.quantidade = quantidade;
     }
+    
 
     //Gets e Setters
 

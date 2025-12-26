@@ -1,26 +1,27 @@
-package java.handlers;
 
 import java.domain.Produto;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class ProdutoHandler {
-    private final List<Produto> produtos = new ArrayList<>();
+    private final HashMap<String,Produto> produtos = new HashMap<>();
 
     public void indicarCriacaoProduto() {
         // aqui poderias iniciar algum estado interno se precisares
     }
 
     public Produto dadosProduto(String sku, String nome,
-                                String unidadeMedida, boolean validade,
-                                String restricoes) {
+                                String unidadeMedida, Date validade,
+                                ArrayList restricoes) {
         // validações mínimas aqui
         Produto p = new Produto(sku, nome, unidadeMedida, restricoes, validade);
-        produtos.add(p);
+        produtos.put(sku, p);
         return p;
     }
 
-    public List<Produto> listarProdutos() {
-        return new ArrayList<>(produtos);
+    public HashMap<String,Produto> listarProdutos() {
+        return new HashMap<>(produtos);
     }
 }
