@@ -22,7 +22,7 @@ public class Encomenda {
     public String getloja(){return loja.toString();} // nao se vai mudar  a loja na encomenda ne ?? 
 
     public String toString() {
-        return String.format("estado:%s prioridade: %s",estado,prioridade,loja);
+        return String.format("estado:%s prioridade: %s ",estado,prioridade,loja);
     } 
     
 }

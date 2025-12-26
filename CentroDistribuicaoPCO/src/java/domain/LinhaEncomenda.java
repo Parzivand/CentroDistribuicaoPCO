@@ -13,7 +13,7 @@ public class LinhaEncomenda {
     public void setquantidade(){this.quantidade=quantidade;}
 
     public String toString(){
-        return String.format(" sku: nome:%s %s",produto.getSKU(),produto.getNome(),
-        produto.);
+        return String.format("sku: nome:%s restricoes:%s quantidade: %d",produto.getSKU(),
+        produto.getNome(), produto.getRestricoes(),quantidade);
     }
 }
