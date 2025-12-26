@@ -1,5 +1,7 @@
 package codigo.domain;
 
+import java.util.HashMap;
+
 public class Expedicao{
 
     // Atributos
