@@ -1,5 +1,4 @@
-package java.domain;
-import java.util.HashMap;
+package codigo.domain;
 
 public class Expedicao{
 
