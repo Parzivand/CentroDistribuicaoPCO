@@ -48,13 +48,11 @@ public class Produto{
     public void setValidade(Date validade) { this.validade = validade; }
 
     public String toString(){
-        if(validade==null){
-        return"SKU: %s  nome: %s unidade de medida: %s restricoes: %s ".format(SKU,nome,unidadeMedida,
-            restricoes.toString());
-        }else{
-            return"SKU: %s  nome: %s unidade de medida: %s restricoes: %s  validade:%s".format(SKU,nome,
-                unidadeMedida,restricoes.toString(),validade);
+        if(validade==null){return"SKU: %s  nome: %s unidade de medida: %s restricoes: %s ".format(SKU,nome,
+            unidadeMedida,restricoes.toString());
         }
+        else{return"SKU: %s  nome: %s unidade de medida: %s restricoes: %s  validade:%s".format(SKU,nome,
+                 unidadeMedida,restricoes.toString(),validade); }
     }
 
 }

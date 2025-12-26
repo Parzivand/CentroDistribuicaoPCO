@@ -1,0 +1,8 @@
+{
+    "C_Cpp.autocomplete": "disabled",
+    "files.autoSave": "afterDelay",
+    "typescript.suggest.enabled": false,
+    "javascript.suggest.enabled": false,
+    "javascript.suggest.completeJSDocs": false,
+    "typescript.suggest.completeJSDocs": false
+}
