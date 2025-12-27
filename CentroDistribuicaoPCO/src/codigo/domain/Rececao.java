@@ -22,6 +22,8 @@ public class Rececao {
             linhasRececoes.add(linhaRececao);
         }
     }
+    public ArrayList<LinhaRececao> getlinhasrececao(){return linhasRececoes;}
+
     public void removerlinhasrececao(LinhaRececao linhaRececao){
         if(linhasRececoes.contains(linhaRececao)){
             linhasRececoes.remove(linhaRececao);
