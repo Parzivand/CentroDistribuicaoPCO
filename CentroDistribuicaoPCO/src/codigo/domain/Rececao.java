@@ -1,24 +1,33 @@
-package codigo.domain;
+package java.domain;
+
+import java.util.ArrayList;
 
 public class Rececao {
 
     // Atributos
 
-    private Produto produto;
+    private ArrayList<LinhaRececao> linhasRececoes;
     private Fornecedor fornecedor;
     // Talvez adicionas quantidade
 
     // Construtor
-    public Rececao(Produto produto, Fornecedor fornecedor) {
-        this.produto = produto;
+    public Rececao( Fornecedor fornecedor) {
         this.fornecedor = fornecedor;
-    }
+        this.linhasRececoes= new ArrayList<>(); 
+    }//
     
     // Gets e Setters
-
-    public Produto getProduto() { return produto; }
-    public void setProduto(Produto produto) { this.produto = produto; }
+    public void adicionarlinhasrececao(LinhaRececao linhaRececao){
+        if(!linhasRececoes.contains(linhaRececao)){
+            linhasRececoes.add(linhaRececao);
+        }
+    }
+    public void removerlinhasrececao(LinhaRececao linhaRececao){
+        if(linhasRececoes.contains(linhaRececao)){
+            linhasRececoes.remove(linhaRececao);
+        }
+    }
     public Fornecedor getFornecedor() { return fornecedor; }
-    public void setFornecedor(Fornecedor fornecedor) { this.fornecedor = fornecedor; }
-    
+    public void setFornecedor(Fornecedor fornecedor) { this.fornecedor = fornecedor; 
+    }
 }
