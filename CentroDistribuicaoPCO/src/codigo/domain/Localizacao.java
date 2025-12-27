@@ -21,15 +21,17 @@ public  class Localizacao {
         this.capacidade_max = capacidade_max;
     }
     //  mostra quantos produtos tem atualmente no armazem 
-    public int capacidade_atual(){
+    public String capacidade_atual(){
      int contador=0;
      int index=0;  
      for(Rececao  rececao:Stock__de_produtos.values()){
         contador+=rececao.getlinhasrececao().get(index).getquantidade();
         index++;
-        if(contador>=capacidade_max){
-         
-     }   
+        if(contador==capacidade_max){
+         return"capacidade maxima atingida"; 
+     }
+    }   
+     return"capacidade atual: "+contador;
     }
 
     // Gets e Setters
