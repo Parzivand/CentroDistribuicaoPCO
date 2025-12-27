@@ -1,9 +1,5 @@
-package codigo.domain;
 
 import java.util.HashMap;
-
-import codigo.domain.Produto;
-
 public  class Localizacao {
 
     // Atributos
@@ -20,6 +16,7 @@ public  class Localizacao {
         this.suporta_resticoes = suporta_resticoes;
         this.capacidade_max = capacidade_max;
     }
+
     //  mostra quantos produtos tem atualmente no armazem 
     public String capacidade_atual(){
      int contador=0;
@@ -29,7 +26,7 @@ public  class Localizacao {
         index++;
         if(contador==capacidade_max){
          return"capacidade maxima atingida"; 
-     }
+    }
     }   
      return"capacidade atual: "+contador;
     }
