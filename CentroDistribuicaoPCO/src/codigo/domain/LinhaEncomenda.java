@@ -1,38 +1,32 @@
 package java.domain;
 
 public class LinhaEncomenda {
-<<<<<<< Updated upstream
     private final Produto produto;
     private int quantidade;
-    public LinhaEncomenda(Produto produto, int quantidade){
-        this.produto= produto;
-        this.quantidade= quantidade;
-    } 
-    public Produto getproduto(){return produto;}
-    
-    public int getquantidade(){return quantidade;}
-    public void setquantidade(){this.quantidade=quantidade;}
 
-    public String toString(){
-        return String.format("sku: nome:%s restricoes:%s quantidade: %d",produto.getSKU(),
-        produto.getNome(), produto.getRestricoes(),quantidade);
+    public LinhaEncomenda(Produto produto, int quantidade) {
+        if (produto == null || quantidade <= 0) {
+            throw new IllegalArgumentException("Produto não pode ser null e quantidade deve ser > 0");
+        }
+        this.produto = produto;
+        this.quantidade = quantidade;
+    }
+
+    // Getters (convenção camelCase)
+    public Produto getProduto() { return produto; }
+    public int getQuantidade() { return quantidade; }
+
+    // Setter corrigido (recebe parâmetro!)
+    public void setQuantidade(int quantidade) {
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser > 0");
+        }
+        this.quantidade = quantidade;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("LinhaEncomenda{produto=%s, quantidade=%d}",
+                produto.getSKU() + " - " + produto.getNome(), quantidade);
     }
 }
-=======
-   private final Produto produto;
-   private int quantidade;
-   public LinhaEncomenda(Produto produto, int quantidade){
-       this.produto= produto;
-       this.quantidade= quantidade;
-   }
-   public Produto getproduto(){return produto;}
-
-   public int getquantidade(){return quantidade;}
-   public void setquantidade(){this.quantidade=quantidade;}
-
-   public String toString(){
-       return String.format(" sku: nome:%s %s",produto.getSKU(),produto.getNome(),
-       produto.);
-   }
-}
->>>>>>> Stashed changes

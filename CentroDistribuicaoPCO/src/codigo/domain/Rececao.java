@@ -1,35 +1,66 @@
-package java.domain;
+package codigo.domain;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Rececao {
 
-    // Atributos
-
-    private ArrayList<LinhaRececao> linhasRececoes;
     private Fornecedor fornecedor;
-    // Talvez adicionas quantidade
+    private LocalDate data;
+    private final List<LinhaRececao> linhas = new ArrayList<>();
+    private String idRececao; // para rastreabilidade
 
-    // Construtor
-    public Rececao( Fornecedor fornecedor) {
+    public Rececao(Fornecedor fornecedor) {
+        if (fornecedor == null) {
+            throw new IllegalArgumentException("Fornecedor não pode ser null");
+        }
         this.fornecedor = fornecedor;
-        this.linhasRececoes= new ArrayList<>(); 
-    }//
-    
-    // Gets e Setters
-    public void adicionarlinhasrececao(LinhaRececao linhaRececao){
-        if(!linhasRececoes.contains(linhaRececao)){
-            linhasRececoes.add(linhaRececao);
-        }
+        this.data = LocalDate.now();
+        this.idRececao = "REC-" + data.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     }
-    public ArrayList<LinhaRececao> getlinhasrececao(){return linhasRececoes;}
 
-    public void removerlinhasrececao(LinhaRececao linhaRececao){
-        if(linhasRececoes.contains(linhaRececao)){
-            linhasRececoes.remove(linhaRececao);
+    public void adicionarLinha(Produto produto, String lote, 
+                               LocalDate validade, int quantidade) {
+        if (produto == null || quantidade <= 0) {
+            throw new IllegalArgumentException("Produto e quantidade válidos requeridos");
         }
+        linhas.add(new LinhaRececao(produto, lote, validade, quantidade));
     }
+
+    // Getters
     public Fornecedor getFornecedor() { return fornecedor; }
-    public void setFornecedor(Fornecedor fornecedor) { this.fornecedor = fornecedor; 
+    public LocalDate getData() { return data; }
+    public List<LinhaRececao> getLinhas() { return new ArrayList<>(linhas); }
+    public String getIdRececao() { return idRececao; }
+    public int getTotalLinhas() { return linhas.size(); }
+    public int getQuantidadeTotal() {
+        return linhas.stream().mapToInt(LinhaRececao::getQuantidadeRecebida).sum();
+    }
+
+    // Setters (se necessário)
+    public void setFornecedor(Fornecedor fornecedor) { 
+        if (fornecedor == null) throw new IllegalArgumentException("Fornecedor não pode ser null");
+        this.fornecedor = fornecedor; 
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Rececao{id=%s, fornecedor=%s, data=%s, linhas=%d, totalQtd=%d}",
+                idRececao, fornecedor.getNome(), data, linhas.size(), getQuantidadeTotal());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Rececao)) return false;
+        Rececao rececao = (Rececao) o;
+        return Objects.equals(idRececao, rececao.idRececao);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idRececao);
     }
 }

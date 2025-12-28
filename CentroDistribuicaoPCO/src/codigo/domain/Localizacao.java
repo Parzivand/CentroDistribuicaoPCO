@@ -1,50 +1,103 @@
 package codigo.domain;
 
-<<<<<<< Updated upstream
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import codigo.domain.Produto;
-
-public  class Localizacao {
-
-    // Atributos
-
-    private String tipo, suporta_resticoes;
-    private int capacidade_max; // Determinamos um tamanho e depois torna-lo final
-    private HashMap<Integer,Rececao> Stock__de_produtos;
-    // Algo que mostre a quantidade atual?
-    
-=======
 public class Localizacao {
 
-    // Atributos
-
+    // Atributos básicos
     private String codigo;
-    private String tipo; // estante, solo, frigorifico, doca...
-    private int capacidadeMaxima;
+    private String tipo; // estante, solo, frigorifico...
+    private int capacidadeMaxima; 
     private String restricoesSuportadas; // frio, perigoso...
 
->>>>>>> Stashed changes
+    // Inventário desta localização: Produto -> quantidade
+    private final Map<Produto, Integer> stock = new HashMap<>();
+
     // Construtor
-    public Localizacao(String codigo, String tipo, int capacidade_max, String suporta_resticoes) {
+    public Localizacao(String codigo, String tipo, int capacidadeMaxima, String restricoesSuportadas) {
         this.codigo = codigo;
         this.tipo = tipo;
-        this.capacidadeMaxima = capacidade_max;
-        this.restricoesSuportadas = suporta_resticoes;
-    }
-    //  mostra quantos produtos tem atualmente no armazem 
-    public int capacidade_atual(){
-     int contador=0;
-     int index=0;  
-     for(Rececao  rececao:Stock__de_produtos.values()){
-        contador+=rececao.getlinhasrececao().get(index).getquantidade();
-        index++;
-        if(contador>=capacidade_max){
-         
-     }   
+        this.capacidadeMaxima = capacidadeMaxima;
+        this.restricoesSuportadas = restricoesSuportadas;
     }
 
-    // Gets e Setters
+    // Métodos de inventário
+
+    public int getQuantidade(Produto produto) {
+        return stock.getOrDefault(produto, 0);
+    }
+
+    public void adicionar(Produto produto, int quantidade) {
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser > 0");
+        }
+
+        verificarCompatibilidade(produto);
+
+        int atual = getQuantidade(produto);
+        stock.put(produto, atual + quantidade);
+    }
+
+
+    public void remover(Produto produto, int quantidade) {
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser > 0");
+        }
+        int atual = getQuantidade(produto);
+        if (quantidade > atual) {
+            throw new IllegalArgumentException("Quantidade a remover maior que a existente");
+        }
+        int novo = atual - quantidade;
+        if (novo == 0) {
+            stock.remove(produto);
+        } else {
+            stock.put(produto, novo);
+        }
+    }
+
+    public Map<Produto, Integer> getStock() {
+        return Collections.unmodifiableMap(stock);
+    }
+
+
+    /**
+     * Verifica se esta localização suporta todas as restrições do produto.
+     */
+    private void verificarCompatibilidade(Produto produto) {
+        List<String> restricoesProduto = produto.getRestricoes();
+        
+        for (String restricao : restricoesProduto) {
+            if (!suportaRestricao(restricao)) {
+                throw new IllegalArgumentException(
+                    String.format("Localização %s não suporta '%s' (produto: %s)", 
+                        codigo, restricao, produto.getSKU())
+                );
+            }
+        }
+    }
+
+
+    /**
+     * Verifica se esta localização suporta uma restrição específica.
+     */
+    private boolean suportaRestricao(String restricao) {
+        if (restricoesSuportadas == null || restricoesSuportadas.isEmpty()) {
+            return restricao.isEmpty();
+        }
+        // Compara separando por vírgula ou espaço
+        String[] suportadas = restricoesSuportadas.toLowerCase().split("[,\\s]+");
+        return Arrays.stream(suportadas).anyMatch(r -> r.trim().equalsIgnoreCase(restricao));
+    }
+
+
+
+
+    // Getters/Setters básicos
 
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }
@@ -58,5 +111,27 @@ public class Localizacao {
     public String getRestricoesSuportadas() { return restricoesSuportadas; }
     public void setRestricoesSuportadas(String restricoesSuportadas) { this.restricoesSuportadas = restricoesSuportadas; }
 
-    
+    @Override
+    public String toString() {
+        return "Localizacao{" +
+                "codigo='" + codigo + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", capacidadeMaxima=" + capacidadeMaxima +
+                ", restricoesSuportadas='" + restricoesSuportadas + '\'' +
+                ", stock=" + stock +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Localizacao)) return false;
+        Localizacao that = (Localizacao) o;
+        return Objects.equals(codigo, that.codigo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(codigo);
+    }
 }

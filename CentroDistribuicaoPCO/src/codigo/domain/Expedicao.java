@@ -1,30 +1,28 @@
 package codigo.domain;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Expedicao{
+public class Expedicao {
 
-    // Atributos
+    private String id;
+    private String estado; // por expedir, expedida...
+    private String localizacao;
+    private final List<Encomenda> encomendas = new ArrayList<>();
 
-    private String estado, Localizacao;
-    private HashMap<String,Encomenda> encomendas;
-    // Construtor
-
-    public Expedicao(String estado, String localizacao) {
-        this.estado = estado;
-        Localizacao = localizacao;
-        this.encomendas= new HashMap<>();
+    public Expedicao(String id, String localizacao) {
+        this.id = id;
+        this.localizacao = localizacao;
+        this.estado = "POR_EXPEDIR";
     }
-    public HashMap getencomendas(){
-        return encomendas;
-    }
-    public String verencomendas(){return encomendas.toString();}
 
-    // Gets e Setters
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-    public String getLocalizacao() { return Localizacao; }
-    public void setLocalizacao(String localizacao) { Localizacao = localizacao; }
-    
-    
+    public void associarEncomenda(Encomenda encomenda) {
+        encomendas.add(encomenda);
+    }
+
+    public void moverPara(String novaLocalizacao) {
+        this.localizacao = novaLocalizacao;
+    }
+
+    // getters/setters
 }
