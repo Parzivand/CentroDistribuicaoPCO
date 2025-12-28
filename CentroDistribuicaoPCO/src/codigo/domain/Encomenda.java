@@ -1,28 +1,30 @@
-package java.domain;
+package codigo.domain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public class Encomenda {
-    private  String estado,referencia;
-    private Boolean prioridade;
-    private final Loja loja;
-    private ArrayList<LinhaEncomenda> linhasencomenda;
-    public Encomenda(String estado,String referencia,Boolean prioridade, Loja loja ){
-        this.estado= estado;
-        this.referencia= referencia;
-        this.prioridade=  prioridade;
-        this.loja= loja;
 
-    }
-    public String getestado(){return estado;}
-    public void setestado(String  estado){this.estado = estado; }
-    public String getreferencia(){return referencia;}
-    public void setreferencia(String  referencia){this.referencia = referencia; }
-    public String getloja(){return loja.toString();} // nao se vai mudar  a loja na encomenda ne ??
+    private String referencia;
+    private Loja loja;
+    private boolean prioridade;
+    private String estado; // por preparar, preparada, expedida...
+    private final List<LinhaEncomenda> linhas = new ArrayList<>();
 
-    public String toString() {
-        return String.format("estado:%s prioridade: %s",estado,prioridade,loja);
+    public Encomenda(String referencia, Loja loja, boolean prioridade) {
+        this.referencia = referencia;
+        this.loja = loja;
+        this.prioridade = prioridade;
+        this.estado = "POR_PREPARAR";
     }
 
+    public void adicionarLinha(Produto produto, int quantidade) {
+        linhas.add(new LinhaEncomenda(produto, quantidade));
+    }
+
+    public List<LinhaEncomenda> getLinhas() {
+        return new ArrayList<>(linhas);
+    }
+
+    // getters/setters restantes
 }

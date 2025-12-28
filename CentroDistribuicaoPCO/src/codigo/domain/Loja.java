@@ -5,7 +5,7 @@ public class Loja {
     //Atributos
 
     private String morada, nome;
-    private int codigo;
+    private int codigo; //Tem tamanho?
 
     //Construtor
 
@@ -23,7 +23,10 @@ public class Loja {
     public void setNome(String nome) { this.nome = nome; }
     public int getCodigo() { return codigo; }
     public void setCodigo(int codigo) { this.codigo = codigo; }
- public String toString(){
-    return String.format("morada: %s nome: %s",morada,nome);
- }   
+
+    @Override
+        public String toString(){
+            return String.format("morada: %s nome: %s",morada,nome);
+        }   
+
 }
