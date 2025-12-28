@@ -1,4 +1,4 @@
-package java.domain;
+package codigo.domain;
 
 public class LinhaEncomenda {
     private final Produto produto;

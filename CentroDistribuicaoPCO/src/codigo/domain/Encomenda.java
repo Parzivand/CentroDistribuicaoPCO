@@ -1,4 +1,4 @@
-package java.domain;
+package codigo.domain;
 
 import java.util.ArrayList;
 import java.util.List;
