@@ -4,3 +4,7 @@
 
 
 <img width="1650" height="931" alt="image" src="https://github.com/user-attachments/assets/eb7a1e41-df8a-4c1a-8baf-aede8b3e1e86" />
+
+### Perguntas para ver:
+
+- Codigo na loja tem tamanho fixo? se tiver tem de verificar depois.

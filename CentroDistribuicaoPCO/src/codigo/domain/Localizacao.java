@@ -1,4 +1,5 @@
 
+<<<<<<< Updated upstream
 import java.util.HashMap;
 public  class Localizacao {
 
@@ -9,12 +10,23 @@ public  class Localizacao {
     private HashMap<Integer,Rececao> Stock__de_produtos;
     // Algo que mostre a quantidade atual?
     
-    // Construtor
+=======
+public class Localizacao {
 
-    public Localizacao(String tipo, String suporta_resticoes, int capacidade_max) {
+    // Atributos
+
+    private String codigo;
+    private String tipo; // estante, solo, frigorifico, doca...
+    private int capacidadeMaxima;
+    private String restricoesSuportadas; // frio, perigoso...
+
+>>>>>>> Stashed changes
+    // Construtor
+    public Localizacao(String codigo, String tipo, int capacidade_max, String suporta_resticoes) {
+        this.codigo = codigo;
         this.tipo = tipo;
-        this.suporta_resticoes = suporta_resticoes;
-        this.capacidade_max = capacidade_max;
+        this.capacidadeMaxima = capacidade_max;
+        this.restricoesSuportadas = suporta_resticoes;
     }
 
     //  mostra quantos produtos tem atualmente no armazem 
@@ -33,14 +45,17 @@ public  class Localizacao {
 
     // Gets e Setters
 
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
 
-    public String getSuporta_resticoes() { return suporta_resticoes; }
-    public void setSuporta_resticoes(String suporta_resticoes) { this.suporta_resticoes = suporta_resticoes; }
+    public int getCapacidadeMaxima() { return capacidadeMaxima; }
+    public void setCapacidadeMaxima(int capacidadeMaxima) { this.capacidadeMaxima = capacidadeMaxima; }
 
-    public int getCapacidade_max() { return capacidade_max; }
-    public void setCapacidade_max(int capacidade_max) { this.capacidade_max = capacidade_max; }
+    public String getRestricoesSuportadas() { return restricoesSuportadas; }
+    public void setRestricoesSuportadas(String restricoesSuportadas) { this.restricoesSuportadas = restricoesSuportadas; }
 
-
+    
 }
