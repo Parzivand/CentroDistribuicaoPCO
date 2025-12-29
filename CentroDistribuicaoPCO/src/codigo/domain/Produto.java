@@ -14,7 +14,6 @@ public class Produto {
     private String SKU;             // CAT-0000000
     private String unidadeMedida;   // ex.: "kg", "unidade", "litro"
     private String categoria;       // ex.: "COM = comida", "ELE = eletronico", "ROU = roupa"
-
     private Date validade;
 
     private final List<String> restricoes = new ArrayList<>();  // Lista de restrições (ex.: "frio", "perigoso", "validadeObrigatoria")
@@ -22,7 +21,7 @@ public class Produto {
     // Construtores
 
     public Produto(String nome, String SKU, String unidadeMedida,
-                   List<String> restricoes, Date validade, String categoria) {
+                   List<String> restricoes,Date validade, String categoria) {
         this.nome = nome;
         this.SKU = SKU;
         this.unidadeMedida = unidadeMedida;
@@ -35,7 +34,8 @@ public class Produto {
 
     public Produto(String nome, String SKU, String unidadeMedida,
                    List<String> restricoes, String categoria) {
-        this(nome, SKU, unidadeMedida, restricoes, null, categoria);
+        this(nome, SKU, unidadeMedida, restricoes, null ,categoria);
+        
     }
 
     // Getters e Setters
@@ -48,6 +48,7 @@ public class Produto {
     public String getUnidadeMedida() { return unidadeMedida; }
     public void setUnidadeMedida(String unidadeMedida) { this.unidadeMedida = unidadeMedida; }
 
+    
     /**
      * Devolve lista imutável para não alterarem as restrições por fora.
      */

@@ -14,6 +14,9 @@ public class  RececaoHandler{
     
     
     public void criar_Rececao(Fornecedor fornecedor){
+        if(fornecedor== null){
+            throw new IllegalArgumentException("erro de  colocar!");
+        }
         rececoes.add(new  Rececao(fornecedor)); 
         }
 
@@ -27,8 +30,12 @@ public class  RececaoHandler{
          }
           return null;
     }
-
-   
-        
+    //  mostra as rececoes de 
+    public ArrayList<Rececao> getrececoes(){
+        if (rececoes.isEmpty()) {
+            System.out.println("nao tem rececoes nenhumas!");
+        }
+        return new ArrayList<>(rececoes);
+    }      
     }
     

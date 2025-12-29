@@ -9,6 +9,7 @@ public class LinhaRececao {
     private String lote;
     private LocalDate validade;
     private int quantidadeRecebida;
+    private String estado;
 
     public LinhaRececao(Produto produto, String lote,
                         LocalDate validade, int quantidadeRecebida) {
@@ -18,12 +19,19 @@ public class LinhaRececao {
         this.quantidadeRecebida = quantidadeRecebida;
     }
 
+
     // getters/setters
 
     public Produto getProduto() { return produto;}
     public String getLote() { return lote;}
     public LocalDate getValidade() { return validade; }
     public int getQuantidadeRecebida() { return quantidadeRecebida; }
+    public String getEstado() {
+        return estado;
+    }
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
 
 

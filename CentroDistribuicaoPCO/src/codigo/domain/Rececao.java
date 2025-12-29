@@ -26,8 +26,15 @@ public class Rececao {
         if (produto == null || quantidade <= 0) {
             throw new IllegalArgumentException("Produto e quantidade válidos requeridos");
         }
+        // verifica se a linha da rececao  tem  uma linha com um produto fora do prazo
+        if(validade==null&& produto.getRestricoes().contains("Requer validade".trim().toLowerCase())){
+            LinhaRececao linhaRececao= new LinhaRececao(produto, lote, validade, quantidade);
+            linhaRececao.setEstado("NC"); 
+        }
         linhas.add(new LinhaRececao(produto, lote, validade, quantidade));
-    }
+        
+        }
+    
     // Getters
     public Fornecedor getFornecedor() { return fornecedor; }
     public LocalDate getData() { return data; }

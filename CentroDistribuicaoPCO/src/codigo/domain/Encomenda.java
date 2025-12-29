@@ -45,7 +45,7 @@ public class Encomenda {
     public String getPrioridadeTexto() {
         return switch (prioridade) {
             case 1 -> "★☆☆☆☆ Baixa";
-            case 2 -> "★★☆☆☆";
+            case 2 -> "★★☆☆☆ Baixa" ;
             case 3 -> "★★★☆☆ Média";
             case 4 -> "★★★★☆ Alta";
             case 5 -> "★★★★★ Alta";

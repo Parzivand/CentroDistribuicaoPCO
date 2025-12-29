@@ -5,11 +5,15 @@ public class AjusteStock {
     //Atributos
     
     private String id;
-    private String estado;      //  
-
+    private String estado;       
+    private  String  produto_codigo;
+    private String localizacao;
+    private boolean aprovacao; 
+    private int quantidade;
     //Construtor
 
-    public AjusteStock(String estado, String produto_codigo, String id, String localizacao, boolean aprovacao, int quantidade) {
+    public AjusteStock(String estado, String produto_codigo, String id, String localizacao,
+         boolean aprovacao, int quantidade) {
         this.estado = estado;
         this.produto_codigo = produto_codigo;
         this.id = id;
@@ -18,8 +22,8 @@ public class AjusteStock {
         this.quantidade = quantidade;
     }
      
-// equ
-ls    //Gets e Setters
+
+    //Gets e Setters
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }

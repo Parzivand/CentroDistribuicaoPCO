@@ -25,7 +25,8 @@ public class AutenticacaoHandler{
     if(!utilizadores.values().contains(utilizador)&& utilizador != null){
         utilizadores.put(utilizador.getEmail(),utilizador);
         System.out.println("utilziador registado com sucesso");
-     }
-    }
+   }
+ }
+ 
 
 }
