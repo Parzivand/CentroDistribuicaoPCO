@@ -1,6 +1,10 @@
 package codigo.domain;
 
 
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ListFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,9 +19,9 @@ public class Localizacao {
     private String tipo; // estante, solo, frigorifico...
     private int capacidadeMaxima; 
     private String restricoesSuportadas; // frio, perigoso...
-
     // Inventário desta localização: Produto -> quantidade
-    private final Map<Produto, Integer> stock = new HashMap<>();
+    private final Map<Produto,Integer> stock = new HashMap<>();
+    private Map<Produto,String> excessoes_a_regra;
 
     // Construtor
     public Localizacao(String codigo, String tipo, int capacidadeMaxima, String restricoesSuportadas) {
@@ -32,18 +36,30 @@ public class Localizacao {
     public int getQuantidade(Produto produto) {
         return stock.getOrDefault(produto, 0);
     }
+    public  int espaco_por_desocupar(){
+        int espaco_ocupado = 0;   
+        for(int quantidades: stock.values()){
+            espaco_ocupado+=quantidades;
 
+        }
+    return capacidadeMaxima-espaco_ocupado;
+    }
+    
     public void adicionar(Produto produto, int quantidade) {
+           
         if (quantidade <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser > 0");
         }
-
+        // caso a quantidade seja muito grande  e  nao  caba na localizacao
+         if(quantidade>espaco_por_desocupar()){
+            excessoes_a_regra.put(produto,"A armazenar");
+         }
+              
         verificarCompatibilidade(produto);
 
         int atual = getQuantidade(produto);
         stock.put(produto, atual + quantidade);
     }
-
 
     public void remover(Produto produto, int quantidade) {
         if (quantidade <= 0) {
@@ -114,13 +130,8 @@ public class Localizacao {
 
     @Override
     public String toString() {
-        return "Localizacao{" +
-                "codigo='" + codigo + '\'' +
-                ", tipo='" + tipo + '\'' +
-                ", capacidadeMaxima=" + capacidadeMaxima +
-                ", restricoesSuportadas='" + restricoesSuportadas + '\'' +
-                ", stock=" + stock +
-                '}';
+        return String.format("Localizacao{codigo='%s', tipo='%s', cap=%d, restricoes='%s', stock=%d itens}",
+            codigo, tipo, capacidadeMaxima, restricoesSuportadas, stock.size());
     }
 
     @Override
@@ -133,6 +144,6 @@ public class Localizacao {
 
     @Override
     public int hashCode() {
-        return Objects.hash(codigo);
+        return Objects.hash(codigo);    
     }
 }

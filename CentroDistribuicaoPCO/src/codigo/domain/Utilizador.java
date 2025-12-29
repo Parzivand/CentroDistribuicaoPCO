@@ -35,7 +35,7 @@ public class Utilizador{
     
     public void AdicionarPermissao(String permissao ){
         if (permissoes.contains(permissao.toLowerCase())){
-            IO.println("Essa nao se encontra nesse utilizador!");
+            IO.println("Essa jase encontra nesse utilizador!");
         }else{
             permissoes.add(permissao.toLowerCase());
         }

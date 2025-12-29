@@ -1,4 +1,4 @@
-package java.domain;
+package codigo.domain;
 
 public class NaoConformidade{
     private String descricao,tipo;

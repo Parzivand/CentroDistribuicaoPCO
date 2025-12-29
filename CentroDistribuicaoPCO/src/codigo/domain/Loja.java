@@ -15,6 +15,7 @@ public class Loja {
         this.codigo = codigo;
     }
 
+
     //Gets e Setters
 
     public String getMorada() { return morada; }

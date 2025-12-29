@@ -3,10 +3,9 @@ package codigo.domain;
 public class AjusteStock {
 
     //Atributos
-
-    private String estado, produto_codigo, id, localizacao;
-    private boolean aprovacao;
-    private int quantidade;
+    
+    private String id;
+    private String estado;      //  
 
     //Construtor
 
@@ -18,9 +17,9 @@ public class AjusteStock {
         this.aprovacao = aprovacao;
         this.quantidade = quantidade;
     }
-    
-
-    //Gets e Setters
+     
+// equ
+ls    //Gets e Setters
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
