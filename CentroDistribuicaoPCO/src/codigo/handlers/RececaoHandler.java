@@ -30,12 +30,27 @@ public class  RececaoHandler{
          }
           return null;
     }
-    //  mostra as rececoes de 
+    //  mostra as rececoes registadas  
     public ArrayList<Rececao> getrececoes(){
         if (rececoes.isEmpty()) {
             System.out.println("nao tem rececoes nenhumas!");
         }
         return new ArrayList<>(rececoes);
+    }
+
+    // filtra a lista de rececoes por fornecedor 
+    public ArrayList Filtrarfornecedores(Fornecedor fornecedor){
+        if(fornecedor.equals(null)){
+            throw new  IllegalArgumentException("errou ao colocar um fornecedor!");
+        }
+        ArrayList<Rececao> sublista=  new ArrayList<>();
+        for(Rececao rececao: rececoes){
+            if(rececao.getFornecedor().equals(fornecedor)){
+                sublista.add(rececao);
+            }
+        }
+        return new ArrayList<>(sublista);
     }      
+
     }
     

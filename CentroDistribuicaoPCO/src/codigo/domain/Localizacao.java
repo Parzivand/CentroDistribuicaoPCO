@@ -20,8 +20,8 @@ public class Localizacao {
     private int capacidadeMaxima; 
     private String restricoesSuportadas; // frio, perigoso...
     // Inventário desta localização: Produto -> quantidade
-    private final Map<Produto,Integer> stock = new HashMap<>();
-    private Map<Produto,String> excessoes_a_regra;
+    private final Map<Produto,Integer> stock = new HashMap<>(); 
+    
 
     // Construtor
     public Localizacao(String codigo, String tipo, int capacidadeMaxima, String restricoesSuportadas) {
@@ -36,24 +36,13 @@ public class Localizacao {
     public int getQuantidade(Produto produto) {
         return stock.getOrDefault(produto, 0);
     }
-    public  int espaco_por_desocupar(){
-        int espaco_ocupado = 0;   
-        for(int quantidades: stock.values()){
-            espaco_ocupado+=quantidades;
-
-        }
-    return capacidadeMaxima-espaco_ocupado;
-    }
+   
     
     public void adicionar(Produto produto, int quantidade) {
            
         if (quantidade <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser > 0");
         }
-        // caso a quantidade seja muito grande  e  nao  caba na localizacao
-         if(quantidade>espaco_por_desocupar()){
-            excessoes_a_regra.put(produto,"A armazenar");
-         }
               
         verificarCompatibilidade(produto);
 
@@ -97,7 +86,11 @@ public class Localizacao {
             }
         }
     }
+    public void algumacoisa(){
 
+
+        
+    }
 
     /**
      * Verifica se esta localização suporta uma restrição específica.

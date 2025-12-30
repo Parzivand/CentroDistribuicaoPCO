@@ -29,11 +29,13 @@ public class Rececao {
         // verifica se a linha da rececao  tem  uma linha com um produto fora do prazo
         if(validade==null&& produto.getRestricoes().contains("Requer validade".trim().toLowerCase())){
             LinhaRececao linhaRececao= new LinhaRececao(produto, lote, validade, quantidade);
-            linhaRececao.setEstado("NC"); 
-        }
+            linhaRececao.setEstado("NC");
+            linhas.add(linhaRececao);
+            
+        }else{
         linhas.add(new LinhaRececao(produto, lote, validade, quantidade));
-        
-        }
+    }
+    }
     
     // Getters
     public Fornecedor getFornecedor() { return fornecedor; }
