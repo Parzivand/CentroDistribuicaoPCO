@@ -1,6 +1,8 @@
 package codigo.domain ;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 
 public class LinhaRececao {
@@ -10,6 +12,7 @@ public class LinhaRececao {
     private LocalDate validade;
     private int quantidadeRecebida;
     private String estado;
+    private ArrayList naoconformidades = new ArrayList();
 
     public LinhaRececao(Produto produto, String lote,
                         LocalDate validade, int quantidadeRecebida) {
@@ -20,8 +23,15 @@ public class LinhaRececao {
     }
 
 
-    // getters/setters
 
+
+    // getters/setters
+    
+    
+    public ArrayList getnaoconformidades(){return new ArrayList<>(naoconformidades);}
+    public void setnaoconformidades(String tipo, String descricao){
+    naoconformidades.add(new NaoConformidade(tipo, descricao));
+    }
     public Produto getProduto() { return produto;}
     public String getLote() { return lote;}
     public LocalDate getValidade() { return validade; }
@@ -32,7 +42,4 @@ public class LinhaRececao {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-
-
-
 }

@@ -1,5 +1,6 @@
 package codigo.domain;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Fornecedor {
@@ -8,6 +9,7 @@ public class Fornecedor {
     private String nome;
     private String email;
     private String telefone;
+
 
     // Construtor
     public Fornecedor(String nome, String email, String telefone) {

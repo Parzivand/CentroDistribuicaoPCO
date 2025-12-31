@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
+import javax.management.InvalidAttributeValueException;
 
 public class ProdutoHandler {
 
@@ -13,6 +16,7 @@ public class ProdutoHandler {
 
     // Mapa categoria -> último número usado
     private final Map<String, Integer> contadoresPorCategoria = new HashMap<>();
+
 
     /**
      * Normaliza e valida a categoria.
@@ -66,6 +70,11 @@ public class ProdutoHandler {
             throw new IllegalStateException("SKU já existente: " + skuGerado);
         }
 
+        // verifica se tem alguma informacao  em falta        
+        if(nome==null || categoria==null || unidadeMedida==null|| restricoes==null){
+            throw new IllegalArgumentException("tem alguma informacão em falta!"); 
+        }
+
         // categoria já vem normalizada dentro do SKU, mas podes guardar cat normalizado também
         String catNormalizada = normalizarCategoria(categoria);
 
@@ -102,7 +111,7 @@ public class ProdutoHandler {
      * Devolve uma cópia do mapa de produtos.
      */
     public Map<String, Produto> getProdutos() {
-        return new HashMap<>(produtos);
+        return new HashMap<>(produtos); 
     }
     
 }

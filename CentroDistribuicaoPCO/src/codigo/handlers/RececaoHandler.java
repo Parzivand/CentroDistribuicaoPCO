@@ -50,7 +50,7 @@ public class  RececaoHandler{
             }
         }
         return new ArrayList<>(sublista);
-    }      
-
+    }
+       
     }
     

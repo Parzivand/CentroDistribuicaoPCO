@@ -27,6 +27,4 @@ public class AutenticacaoHandler{
         System.out.println("utilziador registado com sucesso");
    }
  }
- 
-
 }
