@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
+import java.time.LocalDate;
 import javax.management.InvalidAttributeValueException;
 
 public class ProdutoHandler {
@@ -61,7 +61,7 @@ public class ProdutoHandler {
                                 String categoria,
                                 String unidadeMedida,
                                 List<String> restricoes,
-                                Date validade) {
+                                LocalDate validade) {
 
         String skuGerado = proximoSkuParaCategoria(categoria);
 

@@ -8,6 +8,7 @@ import java.util.List;
 import codigo.domain.Fornecedor;
 import codigo.domain.Localizacao;
 import codigo.domain.Rececao;
+import codigo.domain.Produto;
 
 public class  RececaoHandler{
     private ArrayList<Rececao> rececoes;
@@ -35,7 +36,7 @@ public class  RececaoHandler{
         if (rececoes.isEmpty()) {
             System.out.println("nao tem rececoes nenhumas!");
         }
-        return new ArrayList<>(rececoes);
+        return new ArrayList<>(rececoes.reversed());
     }
 
     // filtra a lista de rececoes por fornecedor 
@@ -44,13 +45,28 @@ public class  RececaoHandler{
             throw new  IllegalArgumentException("errou ao colocar um fornecedor!");
         }
         ArrayList<Rececao> sublista=  new ArrayList<>();
-        for(Rececao rececao: rececoes){
+        for(Rececao rececao: rececoes.reversed()){
+            
             if(rececao.getFornecedor().equals(fornecedor)){
                 sublista.add(rececao);
             }
         }
         return new ArrayList<>(sublista);
     }
-       
+    
+    // para registar  as rececoes ou seja colocar as linhas  e nao conformidades 
+    // como  em cada linha vais ter um produto que pode ou nao ter  nao conformidades 
+    // essa funcao  ta feita para no menu fazermos um while loop que enquanto a resposta for Sim ou Yes 
+    // confinua se for Nao  ou No ela para o loop faz sentido ??? (UC07)
+       public void resgistro_rececoes(Produto produto,int quantidade,String lote,String tipo
+        , String Descricao){
+            if(produto==null || quantidade<0 || lote==null){
+                throw new IllegalArgumentException("falta de informacao no registo da rececao");
+
+            }else{
+                rececoes.getLast().adicionarLinha(produto, lote,produto.getValidade(), quantidade);
+                rececoes.getLast().getLinhas().getLast().setnaoconformidades(tipo, Descricao);
+            }
+        }    
     }
     

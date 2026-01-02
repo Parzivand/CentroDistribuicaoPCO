@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
+import java.time.LocalDate;
 public class Produto {
 
     // Atributos
@@ -14,14 +14,14 @@ public class Produto {
     private String SKU;             // CAT-0000000
     private String unidadeMedida;   // ex.: "kg", "unidade", "litro"
     private String categoria;       // ex.: "COM = comida", "ELE = eletronico", "ROU = roupa"
-    private Date validade;
+    private LocalDate validade;
 
     private final List<String> restricoes = new ArrayList<>();  // Lista de restrições (ex.: "frio", "perigoso", "validadeObrigatoria")
 
     // Construtores
 
     public Produto(String nome, String SKU, String unidadeMedida,
-                   List<String> restricoes,Date validade, String categoria) {
+                   List<String> restricoes,LocalDate validade, String categoria) {
         this.nome = nome;
         this.SKU = SKU;
         this.unidadeMedida = unidadeMedida;
@@ -73,8 +73,8 @@ public class Produto {
         restricoes.remove(restricao);
     }
 
-    public Date getValidade() { return validade; }
-    public void setValidade(Date validade) { this.validade = validade; }
+    public LocalDate getValidade() { return validade; }
+    public void setValidade(LocalDate validade) { this.validade = validade; }
 
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }
