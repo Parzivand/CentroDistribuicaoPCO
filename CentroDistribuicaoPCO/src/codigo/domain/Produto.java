@@ -5,8 +5,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.time.LocalDate;
-public class Produto {
+
+
+public class Produto{
 
     // Atributos
    
@@ -14,14 +15,14 @@ public class Produto {
     private String SKU;             // CAT-0000000
     private String unidadeMedida;   // ex.: "kg", "unidade", "litro"
     private String categoria;       // ex.: "COM = comida", "ELE = eletronico", "ROU = roupa"
-    private LocalDate validade;
+    private Date validade;
 
     private final List<String> restricoes = new ArrayList<>();  // Lista de restrições (ex.: "frio", "perigoso", "validadeObrigatoria")
 
     // Construtores
 
     public Produto(String nome, String SKU, String unidadeMedida,
-                   List<String> restricoes,LocalDate validade, String categoria) {
+                   List<String> restricoes,Date validade, String categoria) {
         this.nome = nome;
         this.SKU = SKU;
         this.unidadeMedida = unidadeMedida;
@@ -62,7 +63,11 @@ public class Produto {
             this.restricoes.addAll(restricoes);
         }
     }
-
+    // compara de acordo com o SkU para posteriormente ser usado na ordenacao alfabetica no Handler 
+    public int compareTo(Produto o){
+        return this.SKU.compareTo(o.SKU);
+    } 
+    
     public void adicionarRestricao(String restricao) {
         if (restricao != null && !restricao.isBlank() && !restricoes.contains(restricao)) {
             restricoes.add(restricao);
@@ -73,8 +78,8 @@ public class Produto {
         restricoes.remove(restricao);
     }
 
-    public LocalDate getValidade() { return validade; }
-    public void setValidade(LocalDate validade) { this.validade = validade; }
+    public Date getValidade() { return validade; }
+    public void setValidade(Date validade) { this.validade = validade; }
 
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }

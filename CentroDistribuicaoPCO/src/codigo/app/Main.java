@@ -1,6 +1,8 @@
 package codigo.app;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import codigo.handlers.ProdutoHandler;
 import codigo.domain.Produto;
@@ -55,9 +57,9 @@ public class Main {
             System.out.println("✅ Erro esperado: " + e.getMessage() + "\n");
         }
 
-        // Teste 4: Listar todos os produtos
-        System.out.println("4. Todos os produtos:");
-        for (Produto p : handler.getProdutos().values()) {
+        // Teste 4: Listar todos os produtos por multiplos de 10 
+        System.out.println("4. Todos os produtos");
+        for (Produto p : handler.getProdutos(10)) {
             System.out.println("  • " + p.getSKU() + " - " + p.getNome());
             System.out.println("    Categoria: " + p.getCategoria());
             System.out.println("    Restrições: " + p.getRestricoes());

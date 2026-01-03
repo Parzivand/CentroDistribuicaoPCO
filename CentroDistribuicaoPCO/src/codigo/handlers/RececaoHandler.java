@@ -64,7 +64,7 @@ public class  RececaoHandler{
                 throw new IllegalArgumentException("falta de informacao no registo da rececao");
 
             }else{
-                rececoes.getLast().adicionarLinha(produto, lote,produto.getValidade(), quantidade);
+                rececoes.getLast().adicionarLinha(produto, lote, quantidade);
                 rececoes.getLast().getLinhas().getLast().setnaoconformidades(tipo, Descricao);
             }
         }    

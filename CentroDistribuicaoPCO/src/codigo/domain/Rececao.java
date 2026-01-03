@@ -9,7 +9,7 @@ public class Rececao {
 
     private Fornecedor fornecedor;   
     private LocalDate data;
-    private final List<LinhaRececao> linhas = new ArrayList<>();
+    private final List<LinhaRececao> linhas = new ArrayList<>();// lista de  linhas da rececao 
     private String idRececao; // para rastreabilidade
   
     public Rececao(Fornecedor fornecedor) {
@@ -21,19 +21,21 @@ public class Rececao {
         this.idRececao = "REC-" + data.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     }
 
-    public void adicionarLinha(Produto produto, String lote, 
-                               LocalDate validade, int quantidade) {
+        // por enquanto  
+    public void adicionarLinha(Produto produto, String lote, int quantidade) {
         if (produto == null || quantidade <= 0) {
             throw new IllegalArgumentException("Produto e quantidade válidos requeridos");
         }
         // verifica se a linha da rececao  tem  uma linha com um produto fora do prazo
-        if(validade==null&& produto.getRestricoes().contains("Requer validade".trim().toLowerCase())){
-            LinhaRececao linhaRececao= new LinhaRececao(produto, lote, validade, quantidade);
+        if(produto.getValidade()== null && 
+        produto.getRestricoes().contains("Requer validade".trim().toLowerCase())){
+        
+            LinhaRececao linhaRececao= new LinhaRececao(produto, lote, quantidade);
             linhaRececao.setEstado("NC");
             linhas.add(linhaRececao);
             
         }else{
-        linhas.add(new LinhaRececao(produto, lote, validade, quantidade));
+        linhas.add(new LinhaRececao(produto, lote, quantidade));
     }
     }
     

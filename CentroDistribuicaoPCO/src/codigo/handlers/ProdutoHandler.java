@@ -1,18 +1,22 @@
 package codigo.handlers;
 
 import codigo.domain.Produto;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import javax.management.InvalidAttributeValueException;
 
 public class ProdutoHandler {
 
     // Mapa SKU -> Produto
-    private final Map<String, Produto> produtos = new HashMap<>();
+    private final Map<String, Produto> produtos = new TreeMap<>();
 
     // Mapa categoria -> último número usado
     private final Map<String, Integer> contadoresPorCategoria = new HashMap<>();
@@ -61,7 +65,7 @@ public class ProdutoHandler {
                                 String categoria,
                                 String unidadeMedida,
                                 List<String> restricoes,
-                                LocalDate validade) {
+                                Date validade) {
 
         String skuGerado = proximoSkuParaCategoria(categoria);
 
@@ -110,8 +114,18 @@ public class ProdutoHandler {
     /**
      * Devolve uma cópia do mapa de produtos.
      */
-    public Map<String, Produto> getProdutos() {
-        return new HashMap<>(produtos); 
-    }
     
+    public ArrayList<Produto>  getProdutos(int valor) { 
+   // criei uma lista com todos os valores do Map para que se possa  mostrar todos os valores de 10 em 10 caso
+   // seja solicitado
+   ArrayList<Produto> mostrar_produtos = new ArrayList<>();
+   mostrar_produtos.addAll(produtos.values());
+   if(valor>mostrar_produtos.size()-1){
+    IO.println(mostrar_produtos);
+    throw new IndexOutOfBoundsException("demasiado  grande o valor\n");
+   }
+        return new ArrayList(mostrar_produtos.subList(0, valor)); 
+    }
 }
+    
+
