@@ -57,7 +57,9 @@ public class  RececaoHandler{
     // para registar  as rececoes ou seja colocar as linhas  e nao conformidades 
     // como  em cada linha vais ter um produto que pode ou nao ter  nao conformidades 
     // essa funcao  ta feita para no menu fazermos um while loop que enquanto a resposta for Sim ou Yes 
-    // confinua se for Nao  ou No ela para o loop faz sentido ??? (UC07)
+    // confinua se for Nao  ou No ela para o loop faz sentido ??? (UC07) 
+    // ah se fores ver as nas rececoes e nao tiver validade é pq podes aceder a validade do produto pela 
+    // validade do produto 
        public void resgistro_rececoes(Produto produto,int quantidade,String lote,String tipo
         , String Descricao){
             if(produto==null || quantidade<0 || lote==null){
@@ -67,6 +69,13 @@ public class  RececaoHandler{
                 rececoes.getLast().adicionarLinha(produto, lote, quantidade);
                 rececoes.getLast().getLinhas().getLast().setnaoconformidades(tipo, Descricao);
             }
+        }
+        // o produto de uma linha da  rececao  que esta a ser registada pode nao ter nao conformidades    
+        public void resgistro_rececoes(Produto produto,int quantidade,String lote){
+            if(produto==null || quantidade<0 || lote==null){
+                throw new IllegalArgumentException("falta de informacao no registo da rececao");
+
+            }else{rececoes.getLast().adicionarLinha(produto, lote, quantidade);}
         }    
     }
     

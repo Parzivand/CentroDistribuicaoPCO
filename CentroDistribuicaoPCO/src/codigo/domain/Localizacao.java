@@ -25,14 +25,13 @@ public class Localizacao {
 
     // Construtor
     public Localizacao(String codigo, String tipo, int capacidadeMaxima, String restricoesSuportadas) {
-        this.codigo = codigo;
+        this.codigo = codigo;   
         this.tipo = tipo;
         this.capacidadeMaxima = capacidadeMaxima;
         this.restricoesSuportadas = restricoesSuportadas;
     }
 
     // Métodos de inventário
-
     public int getQuantidade(Produto produto) {
         return stock.getOrDefault(produto, 0);
     }
@@ -86,12 +85,7 @@ public class Localizacao {
             }
         }
     }
-    public void algumacoisa(){
-
-
-        
-    }
-
+   
     /**
      * Verifica se esta localização suporta uma restrição específica.
      */
@@ -103,6 +97,7 @@ public class Localizacao {
         String[] suportadas = restricoesSuportadas.toLowerCase().split("[,\\s]+");
         return Arrays.stream(suportadas).anyMatch(r -> r.trim().equalsIgnoreCase(restricao));
     }
+
 
 
 

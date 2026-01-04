@@ -7,11 +7,11 @@ public class Loja {
     //Atributos
 
     private String morada, nome;
-    private int codigo; //Tem tamanho?
+    private String codigo; //Tem tamanho?
 
     //Construtor
 
-    public Loja(String morada, String nome, int codigo) {
+    public Loja(String morada,String nome, String codigo) {
         this.morada = morada;
         this.nome = nome;
         this.codigo = codigo;
@@ -24,9 +24,10 @@ public class Loja {
     public void setMorada(String morada) { this.morada = morada; }
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
-    public int getCodigo() { return codigo; }
-    public void setCodigo(int codigo) { this.codigo = codigo;}
-
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo;}
+    
+    
     @Override 
     public boolean equals(Object o){
         if(this==o )return true;

@@ -41,7 +41,7 @@ public class Encomenda {
     public boolean isAltaPrioridade() {
         return prioridade >= 4; // 4 e 5 = alta prioridade
     }
-
+    
     public String getPrioridadeTexto() {
         return switch (prioridade) {
             case 1 -> "★☆☆☆☆ Baixa";
