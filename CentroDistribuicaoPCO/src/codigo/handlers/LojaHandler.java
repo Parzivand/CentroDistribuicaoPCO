@@ -15,7 +15,7 @@ public class LojaHandler {
     public void adicionarLoja(String nome,String area_atuacao,String morada){
         Random random = new Random();
         if(area_atuacao==null||area_atuacao.matches("[a-z]{3}")){
-            throw new IllegalArgumentException("tem elementos a mais ou esqueceste de por o codigo");
+            throw new IllegalArgumentException("a area ta errada tem de ter apenas  3  letras");
         }
         String codigogerado= area_atuacao+String.format("%06d",random.nextInt(000000,
             999999));

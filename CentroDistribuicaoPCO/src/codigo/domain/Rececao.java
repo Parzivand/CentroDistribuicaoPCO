@@ -11,7 +11,8 @@ public class Rececao {
     private LocalDate data;
     private final List<LinhaRececao> linhas = new ArrayList<>();// lista de  linhas da rececao 
     private String idRececao; // para rastreabilidade
-  
+    
+
     public Rececao(Fornecedor fornecedor) {
         if (fornecedor == null) {
             throw new IllegalArgumentException("Fornecedor não pode ser null");
@@ -34,9 +35,9 @@ public class Rececao {
             linhaRececao.setEstado("NC");
             linhas.add(linhaRececao);
             
-        }else{
+        }
         linhas.add(new LinhaRececao(produto, lote, quantidade));
-    }
+        
     }
     
     // Getters

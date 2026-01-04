@@ -53,6 +53,25 @@ public class  RececaoHandler{
         }
         return new ArrayList<>(sublista);
     }
+     
+    public ArrayList Filtrarperiodo(LocalDate localDate, LocalDate localDate2){
+        ArrayList<Rececao> sublista=  new ArrayList<>();
+        
+        if(localDate==null || localDate2 ==null|| localDate.isAfter(localDate2)){
+            throw new  IllegalArgumentException("faltou alguma data está em falta ou as datas estao trocadas");
+        }
+
+        for(Rececao rececao: rececoes.reversed()){
+            
+            if(rececao.getData().isAfter(localDate) && rececao.getData().isBefore(localDate2)){
+                sublista.add(rececao);
+            }
+            
+        }
+
+        return new ArrayList<>(sublista);
+    }
+    
     
     // para registar  as rececoes ou seja colocar as linhas  e nao conformidades 
     // como  em cada linha vais ter um produto que pode ou nao ter  nao conformidades 

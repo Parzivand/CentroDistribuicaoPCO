@@ -21,5 +21,6 @@ class StockItem {
     public int getQuantidade(){return quantidade;}
     public  void setQuantidade(int quantidade){ this.quantidade= quantidade;}
     public Localizacao getLocalizacao(){return localizacao;}
+    public void setLocalizacao(Localizacao novaLocalizacao){localizacao=novaLocalizacao ;}
     }
 

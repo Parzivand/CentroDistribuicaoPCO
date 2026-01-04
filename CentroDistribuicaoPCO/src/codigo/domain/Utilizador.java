@@ -8,16 +8,19 @@ public class Utilizador{
     // Atributos
 
     private String nome, email, password;
-    private List<String>  permissoes; /*  faz sentido ser  uma lista de permissoes porque  podes ter varias
+    private List<String>  permissoes;// lista de funcoes que o utilizador pode fazer ex: ADMINISTRADOR(criar produto, criar  fornecedor,...)
+    private Role cargo;// Ex: ADMINISTRADOR, OPERDADOR DE  SELECAO , GESTOR LOGISTICO , ETC...  
+    /*  faz sentido ser  uma lista de permissoes porque  podes ter varias
                                        permissoes nao sei se quiseres mudar tas a vontade se te fizer mais
                                         sentido*/ 
 
     // Construtor
-    public Utilizador(String nome, String email, String password, ArrayList<String> permissoes) {
+    public Utilizador(String nome, String email, String password, ArrayList<String> permissoes,Role cargo) {
         this.nome = nome;
         this.email = email;
         this.password = password;
         this.permissoes = permissoes;
+        this.cargo = cargo; 
     }
 
     // Gets e Setters

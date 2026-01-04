@@ -8,10 +8,10 @@ public class Loja {
 
     private String morada, nome;
     private String codigo; //Tem tamanho?
-
+    private String area_atuacao;
     //Construtor
 
-    public Loja(String morada,String nome, String codigo) {
+    public Loja(String morada,String nome, String codigo){
         this.morada = morada;
         this.nome = nome;
         this.codigo = codigo;

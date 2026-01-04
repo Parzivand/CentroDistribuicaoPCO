@@ -15,17 +15,18 @@ import java.util.Objects;
 public class Localizacao {
 
     // Atributos básicos
-    private String codigo;
+
     private String tipo; // estante, solo, frigorifico...
     private int capacidadeMaxima; 
     private String restricoesSuportadas; // frio, perigoso...
+    private  String codigo;
     // Inventário desta localização: Produto -> quantidade
     private final Map<Produto,Integer> stock = new HashMap<>(); 
     
 
     // Construtor
-    public Localizacao(String codigo, String tipo, int capacidadeMaxima, String restricoesSuportadas) {
-        this.codigo = codigo;   
+    public Localizacao( String codigo,String tipo, int capacidadeMaxima, String restricoesSuportadas) {
+        this.codigo=codigo;
         this.tipo = tipo;
         this.capacidadeMaxima = capacidadeMaxima;
         this.restricoesSuportadas = restricoesSuportadas;
