@@ -106,7 +106,7 @@ public class  RececaoHandler{
             ,rececoes.getLast().getIdRececao(),rececoes.getLast().getLinhas().size(),rececoes.getLast().listarProdutosquarentena());
         }
         // atualiza o stock ou seja 
-        public ArrayList<StockItem> atualizarstockrececoes(){
+        public  ArrayList<StockItem> atualizarstockrececoes(){
             ArrayList<StockItem> itens_no_Stock = new ArrayList<>(); 
             for(LinhaRececao linhas : rececoes.getLast().getLinhas()){
                 if(linhas.getEstado()=="NC"){
@@ -119,6 +119,5 @@ public class  RececaoHandler{
 
             }
             return  new ArrayList<>(itens_no_Stock);
-        }
-    }
+           }}
     

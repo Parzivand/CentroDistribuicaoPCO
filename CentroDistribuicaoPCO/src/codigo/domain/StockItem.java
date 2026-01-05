@@ -24,5 +24,6 @@ public class StockItem {
     public void setLocalizacao(String novaLocalizacao){localizacao=novaLocalizacao;}
     public String getEstado(){return estado;}
     public void setEstado(String estado){this.estado=estado;}
+    public Produto geProduto(){return produto;}
     }
 
