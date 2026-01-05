@@ -4,5 +4,9 @@
     "typescript.suggest.enabled": false,
     "javascript.suggest.enabled": false,
     "javascript.suggest.completeJSDocs": false,
-    "typescript.suggest.completeJSDocs": false
+    "typescript.suggest.completeJSDocs": false,
+    "java.project.referencedLibraries": [
+        "lib/gson-2.13.2.jar",
+        "CentroDistribuicaoPCO/lib/gson-2.13.2.jar"
+    ]
 }

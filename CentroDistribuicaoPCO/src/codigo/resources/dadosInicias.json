@@ -1,0 +1,63 @@
+{
+  "utilizadores": [
+    {
+      "username": "admin",
+      "email": "admin@distrib.pt",
+      "password": "admin123",
+      "papel": "ADMINISTRADOR"
+    },
+    {
+      "username": "op_rececao",
+      "email": "rececao@distrib.pt",
+      "password": "rececao123",
+      "papel": "OPERADOR_RECECAO"
+    }
+  ],
+
+  "fornecedores": [
+    {
+      "id": "F001",
+      "nome": "Lactogal",
+      "contacto": "log@lacto.pt"
+    }
+  ],
+
+  "produtos": [
+    {
+      "sku": "LAC-001",
+      "nome": "Leite 1L",
+      "unidadeMedida": "L",
+      "exigeValidade": true,
+      "restricoes": ["FRIO"],
+      "fornecedorId": "F001"
+    }
+  ],
+
+  "lojas": [
+    {
+      "codigo": "LOJ001",
+      "nome": "Loja Centro",
+      "morada": "Rua Central, Ponta Delgada"
+    }
+  ],
+
+  "localizacoes": [
+    {
+      "id": "A1",
+      "tipo": "ESTANTE",
+      "capacidadeMax": 100,
+      "restricoesSuportadas": []
+    }
+  ],
+
+  "stocks": [
+    {
+      "sku": "LAC-001",
+      "localizacaoId": "A1",
+      "lote": "LOT001",
+      "validade": "2026-05-30",
+      "quantidade": 50,
+      "estado": "DISPONIVEL"
+    }
+  ]
+}

@@ -14,5 +14,4 @@ public class InventarioHandler{
   
 public void adicionar_aoStock(ArrayList<StockItem> item){stock_dos_itens.addAll(item);}
 // adicionar  o associar as localizacoes e encomendas 
-
-}
+} 

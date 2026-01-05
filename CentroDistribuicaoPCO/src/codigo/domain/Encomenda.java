@@ -2,6 +2,7 @@ package codigo.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Encomenda {
     
@@ -23,9 +24,9 @@ public class Encomenda {
     }
 
     // Adicionar linha à encomenda
-    public void adicionarLinha(Produto produto, int quantidade) {
+    public void adicionarLinha(Produto produto, int quantidade){
         linhas.add(new LinhaEncomenda(produto, quantidade));
-    }
+    } 
 
     // Getters
     public String getReferencia() { return referencia; }
@@ -57,5 +58,14 @@ public class Encomenda {
     public String toString() {
         return String.format("Encomenda{%s | Loja: %s | Prioridade: %s | Linhas: %d}",
                 referencia, loja.getNome(), getPrioridadeTexto(), linhas.size());
+    }
+   
+    @Override
+    public boolean equals(Object obj) {
+        // TODO Auto-generated method stub
+        return super.equals(obj);
+        Encomenda encomenda = (Encomenda) obj;
+        return Objects.equals(encomenda, obj);
+
     }
 }

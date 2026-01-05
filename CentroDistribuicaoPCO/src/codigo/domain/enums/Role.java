@@ -1,4 +1,4 @@
-package codigo.domain;
+package codigo.domain.enums;
 
 public enum Role {
     ADMINISTRADOR,

@@ -1,8 +1,9 @@
 package codigo.handlers;
 
 import codigo.domain.Utilizador;
+import codigo.domain.enums.Role;
+
 import java.util.*;
-import codigo.domain.Role;
 public class UtilizadorHandler {
     private final List<Utilizador> utilizadores = new ArrayList<>();
 

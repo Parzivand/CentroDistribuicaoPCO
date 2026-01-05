@@ -3,11 +3,15 @@ package codigo.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import codigo.domain.enums.Role;
+
 public class Utilizador{
 
     // Atributos
 
-    private String nome, email, password;
+    private String nome;
+    private String email;
+    private String password;
     private List<String>  permissoes;// lista de funcoes que o utilizador pode fazer ex: ADMINISTRADOR(criar produto, criar  fornecedor,...)
     private Role cargo;// Ex: ADMINISTRADOR, OPERDADOR DE  SELECAO , GESTOR LOGISTICO , ETC...  
     /*  faz sentido ser  uma lista de permissoes porque  podes ter varias
@@ -15,7 +19,7 @@ public class Utilizador{
                                         sentido*/ 
 
     // Construtor
-    public Utilizador(String nome, String email, String password, ArrayList<String> permissoes,Role cargo) {
+    public Utilizador(String nome, String email, String password, List<String> permissoes,Role cargo) {
         this.nome = nome;
         this.email = email;
         this.password = password;
@@ -37,7 +41,7 @@ public class Utilizador{
     public Role getcargo() { return cargo; }
     public void setPassword(Role cargo) { this.cargo = cargo; }
     
-    public ArrayList<String> getPermissoes() { return new ArrayList<>(permissoes);}
+    public List<String> getPermissoes() { return new ArrayList<>(permissoes);}
     
     public void AdicionarPermissao(String permissao ){
         if (permissoes.contains(permissao.toLowerCase())){
