@@ -10,8 +10,7 @@ public class LinhaRececao {
 
     private Produto produto;
     private String lote;
-    // private LocalDate validade; 
-    //pq a linha tem validade se podes usar a validade do  produto ???   
+  
     private int quantidadeRecebida;
     private String estado;
     private ArrayList naoconformidades = new ArrayList();
@@ -19,11 +18,8 @@ public class LinhaRececao {
     public LinhaRececao(Produto produto, String lote, int quantidadeRecebida) {
         this.produto = produto;
         this.lote = lote;
-        //this.validade = validade;
         this.quantidadeRecebida = quantidadeRecebida;
     }
-
-
 
 
     // getters/setters
@@ -42,5 +38,10 @@ public class LinhaRececao {
     }
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+    @Override 
+    public String toString() {
+       
+        return String.format("lote:%s produto: %s  quantidade recebida: %d \n", lote,produto,quantidadeRecebida);
     }
 }

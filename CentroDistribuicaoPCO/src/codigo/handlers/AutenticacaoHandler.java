@@ -3,7 +3,6 @@ package codigo.handlers;
 import java.util.HashMap;
 
 import codigo.domain.Utilizador;
-import codigo.app.mainoperadorUI;
 public class AutenticacaoHandler{
 // Atributos
     UtilizadorHandler utilizadores;

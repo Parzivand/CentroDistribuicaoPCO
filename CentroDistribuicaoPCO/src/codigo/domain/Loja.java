@@ -19,7 +19,6 @@ public class Loja {
 
 
     //Gets e Setters
-
     public String getMorada() { return morada; }
     public void setMorada(String morada) { this.morada = morada; }
     public String getNome() { return nome; }

@@ -1,26 +1,28 @@
 package codigo.domain;
 import java.time.LocalDate;
 
-class StockItem {
+public class StockItem {
 
     Produto produto;
     String lote;
-    Localizacao localizacao;
+    String localizacao;
     int quantidade;
     private String  estado; // Disponivel, Quarentena, Reservado
-    // LocalDate validade;.... 
+    // LocalDate validade;.... tambem acho que nao 
 
-    public StockItem(Produto produto, int quantidade,String lote, Localizacao localizacao){
+    public StockItem(Produto produto, int quantidade,String lote,String  localizacao){
         this.produto= produto;
         this.quantidade= quantidade;
         this.lote= lote;
-        this.localizacao=localizacao; 
+         this.localizacao=localizacao; 
     }
 
     // getters|setters
     public int getQuantidade(){return quantidade;}
     public  void setQuantidade(int quantidade){ this.quantidade= quantidade;}
-    public Localizacao getLocalizacao(){return localizacao;}
-    public void setLocalizacao(Localizacao novaLocalizacao){localizacao=novaLocalizacao ;}
+    public String getLocalizacao(){return localizacao;}
+    public void setLocalizacao(String novaLocalizacao){localizacao=novaLocalizacao;}
+    public String getEstado(){return estado;}
+    public void setEstado(String estado){this.estado=estado;}
     }
 

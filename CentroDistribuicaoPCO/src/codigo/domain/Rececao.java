@@ -35,11 +35,23 @@ public class Rececao {
         //  verifica se o produto da linha ta em excesso e se tiver  ele assinala a linha como "a armazenar"
 
        if(linhas.getLast().getnaoconformidades().contains("excesso".toLowerCase().trim())){
-        linhas.getLast().setEstado("A armazenar");
+        linhas.getLast().setEstado("A armazenar"); 
+        new StockItem(produto, quantidade, lote, null);
        }
-        
+       
        
     }
+    // mostra a lista de produtos fora da validade depois de registar a encomenda como descrito no UC07
+    public ArrayList<LinhaRececao> listarProdutosquarentena(){
+        ArrayList<LinhaRececao> subLista = new ArrayList<>(); 
+        for(LinhaRececao linha_Rececao: linhas){
+            if(linha_Rececao.getEstado().equals("NC")){
+                subLista.add(linha_Rececao);
+            }
+        }
+        return new ArrayList<>(subLista);
+    }
+    
     
     // Getters
     public Fornecedor getFornecedor() { return fornecedor; }
@@ -76,14 +88,4 @@ public class Rececao {
         return Objects.hash(idRececao);
     }
 
-    // mostra a lista de produtos fora da validade depois de registar a encomenda como descrito no UC07
-    public ArrayList<LinhaRececao> listarProdutosquarentena(){
-        ArrayList<LinhaRececao> subLista = new ArrayList<>(); 
-        for(LinhaRececao linha_Rececao: linhas){
-            if(linha_Rececao.getEstado().equals("NC")){
-                subLista.add(linha_Rececao);
-            }
-        }
-        return new ArrayList<>(subLista);
-    }
 }

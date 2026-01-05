@@ -7,21 +7,21 @@ public class AjusteStock {
     private String id;
     private String estado;       
     private  String  produto_codigo;
-    private String localizacao;
+    private Localizacao localizacao;
     private boolean aprovacao; 
     private int quantidade;
     //Construtor
 
-    public AjusteStock(String estado, String produto_codigo, String id, String localizacao,
-         boolean aprovacao, int quantidade) {
-        this.estado = estado;
+    public AjusteStock( Produto produto, String id,Localizacao localizacao, int quantidade) {
+        this.estado = "pendente";
         this.produto_codigo = produto_codigo;
         this.id = id;
         this.localizacao = localizacao;
-        this.aprovacao = aprovacao;
+        this.aprovacao = false;
         this.quantidade = quantidade;
     }
-     
+    
+
 
     //Gets e Setters
     
@@ -34,8 +34,8 @@ public class AjusteStock {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getLocalizacao() { return localizacao; }
-    public void setLocalizacao(String localizacao) { this.localizacao = localizacao; }
+    public Localizacao getLocalizacao() { return localizacao; }
+    public void setLocalizacao(Localizacao localizacao) { this.localizacao = localizacao; }
 
     public boolean isAprovacao() { return aprovacao; }
     public void setAprovacao(boolean aprovacao) { this.aprovacao = aprovacao; }
