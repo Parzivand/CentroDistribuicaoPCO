@@ -28,13 +28,16 @@ public class Utilizador{
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
     
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getEmail() { return email;}
+    public void setEmail(String email) { this.email = email;}
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public Role getcargo() { return cargo; }
+    public void setPassword(Role cargo) { this.cargo = cargo; }
     
-    public String getPermissoes() { return permissoes.toString();}
+    public ArrayList<String> getPermissoes() { return new ArrayList<>(permissoes);}
     
     public void AdicionarPermissao(String permissao ){
         if (permissoes.contains(permissao.toLowerCase())){

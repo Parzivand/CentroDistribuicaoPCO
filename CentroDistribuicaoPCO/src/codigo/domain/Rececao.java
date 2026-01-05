@@ -30,14 +30,15 @@ public class Rececao {
         // verifica se a linha da rececao  tem  uma linha com um produto fora do prazo
         if(produto.getValidade()== null && 
         produto.getRestricoes().contains("Requer validade".trim().toLowerCase())){
-        
-            LinhaRececao linhaRececao= new LinhaRececao(produto, lote, quantidade);
-            linhaRececao.setEstado("NC");
-            linhas.add(linhaRececao);
-            
+            linhas.getLast().setEstado("NC");
         }
-        linhas.add(new LinhaRececao(produto, lote, quantidade));
+        //  verifica se o produto da linha ta em excesso e se tiver  ele assinala a linha como "a armazenar"
+
+       if(linhas.getLast().getnaoconformidades().contains("excesso".toLowerCase().trim())){
+        linhas.getLast().setEstado("A armazenar");
+       }
         
+       
     }
     
     // Getters
@@ -73,5 +74,16 @@ public class Rececao {
     @Override
     public int hashCode() {
         return Objects.hash(idRececao);
+    }
+
+    // mostra a lista de produtos fora da validade depois de registar a encomenda como descrito no UC07
+    public ArrayList<LinhaRececao> listarProdutosquarentena(){
+        ArrayList<LinhaRececao> subLista = new ArrayList<>(); 
+        for(LinhaRececao linha_Rececao: linhas){
+            if(linha_Rececao.getEstado().equals("NC")){
+                subLista.add(linha_Rececao);
+            }
+        }
+        return new ArrayList<>(subLista);
     }
 }

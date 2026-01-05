@@ -3,28 +3,26 @@ package codigo.handlers;
 import java.util.HashMap;
 
 import codigo.domain.Utilizador;
-
+import codigo.app.mainoperadorUI;
 public class AutenticacaoHandler{
 // Atributos
-    private HashMap<String,Utilizador> utilizadores;
+    UtilizadorHandler utilizadores;
+    
+    public void Autenticar(String nome, String password){
+      if(nome==null|| password==null){
+         throw new IllegalArgumentException("informacoes vazias");
+      }
+      for(Utilizador utilizador: utilizadores.listarUtilizadores()){
+         if(utilizador.getNome().equals(nome)&& utilizador.getPassword().equals(password)){
+            // usar o menu  como utilizador
+            break;  
+         }  
+         
+      }
+    }
 
-    public  String Autenticar(String email,String password){
-       // processo de autenticacao 
-       if(utilizadores.containsKey(email)&& utilizadores.get(email).getPassword().equals(password)){
-        return"autenticacao com sucesso";
-
-       }else if(utilizadores.containsKey(email)&& utilizadores.get(email).getPassword()!= password){
-        return "credenciais invalidas";
-       }
-       else{
-        return"falha na autenticacao"; 
-       }   
-    }   
-       // registar utilizador
-    public void registarUtilizador(Utilizador utilizador){
-    if(!utilizadores.values().contains(utilizador)&& utilizador != null){
-        utilizadores.put(utilizador.getEmail(),utilizador);
-        System.out.println("utilziador registado com sucesso");
-   }
- }
+    public void registar_utilizador(Utilizador utilizador){
+      utilizadores.dadosUtilizador(utilizador.getNome(),utilizador.getEmail(), utilizador.getPassword(),utilizador.getPermissoes(),
+      utilizador.getcargo());
+    }
 }
