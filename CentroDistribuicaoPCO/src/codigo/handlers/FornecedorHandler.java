@@ -12,87 +12,143 @@ import java.util.TreeMap;
 import codigo.domain.Fornecedor;
 import codigo.domain.Produto;
 
-public class FornecedorHandler{
+public class FornecedorHandler{ 
     Map<String,Fornecedor> fornecedores = new TreeMap<>();
     Map<Fornecedor,ArrayList<Produto>> produtosdosfornecedores; //   fornecedores  com a sua lista de produtos 
     // UC03
-    public void adicionarfornecedor(String nome,
+    public void adicionarFornecedor(String nome,
         String email,String telefone){
             if(!(nome==null||email==null||telefone==null)){
-                fornecedores.putIfAbsent(nome.trim().toUpperCase(),new Fornecedor(nome.trim(), email, telefone));
-                produtosdosfornecedores.put(new Fornecedor(nome.trim(), email, telefone),null);
+                fornecedores.putIfAbsent(email.trim().toUpperCase(),new Fornecedor(nome.trim(), email, telefone));
+                produtosdosfornecedores.put(new Fornecedor(nome, email.trim(), telefone),null);// ao mesmo tempo que adiciona na lista de fornecedores 
+                // adiciona no mapa dos produtosdosfornecedores 
                 // se ja existir o nome como chave ele nao adiciona ao map
+                  
+                //oki 
+
             }else{
                 throw new IllegalArgumentException("falta elementos");            
             }
         }
-    // veifica se o fornecedor tem produtos UC20
-
-    public void associar_produtos(Produto produto,String fornecedorid){
-        if(produto==null|| fornecedorid==null||!fornecedores.containsKey(fornecedorid)){
+    
+    public void associarProdutos(Produto produto,String email){
+        if(produto==null|| email==null||!fornecedores.containsKey(email)){
             throw new IllegalArgumentException("argumentos invalidos");
         }
         Set<Fornecedor> listafornecedores= produtosdosfornecedores.keySet();
         for(Fornecedor fornecedor:listafornecedores){
-            if(fornecedor.getNome().equals(fornecedorid)&& produtosdosfornecedores.get(fornecedor).contains(produto)){
+            if(fornecedor.getEmail().equals(email)&& produtosdosfornecedores.get(fornecedor).contains(produto)){
                 throw new IllegalArgumentException("o fornecedor ja tem  esse produto na lista");
             }
-            if(fornecedor.getNome().equals(fornecedorid)&& !produtosdosfornecedores.get(fornecedor).contains(produto)){
+            if(fornecedor.getEmail().equals(email) && !produtosdosfornecedores.get(fornecedor).contains(produto)){
                 produtosdosfornecedores.get(fornecedor).add(produto);
             }
-            
         }    
     }
-    public void desassociarproduto(Produto produto,String fornecedorid){
-     if(produto==null|| fornecedorid==null||!fornecedores.containsKey(fornecedorid)){
+    public void desassociarproduto(Produto produto,String email ){
+     if(produto==null|| email==null||!fornecedores.containsKey(email)){
             throw new IllegalArgumentException("argumentos invalidos");
         }
         Set<Fornecedor> listafornecedores= produtosdosfornecedores.keySet();
 
         for(Fornecedor fornecedor:listafornecedores){
-            if(fornecedor.getNome().equals(fornecedorid)&& produtosdosfornecedores.get(fornecedor).contains(produto)){
+            if(fornecedor.getEmail().equals(email)&& produtosdosfornecedores.get(fornecedor).contains(produto)){
                 produtosdosfornecedores.get(fornecedor).remove(produto);
             }
-            if(fornecedor.getNome().equals(fornecedorid)&& !produtosdosfornecedores.get(fornecedor).contains(produto)){
+            if(fornecedor.getEmail().equals(email)&& !produtosdosfornecedores.get(fornecedor).contains(produto)){
                 throw new IllegalArgumentException("o fornecedor nao  tem  produto na  sua  lista");
             }
-            
         }    
-    }   
-    
+    }       
 
 
-    public void removerfornecedor(String nome){
+
+
+
+    // veifica se o fornecedor tem produtos UC20
+    public void removerfornecedor(String email){
         Set<Fornecedor> listafornecedores= produtosdosfornecedores.keySet();// set com todos as chaves do mapa  
         // produtosdosfornecedores para ser usado no loop    
-        if(nome==null){
+        if(!fornecedores.containsKey(email)){
+        throw new IllegalArgumentException(String.format("o fornecedor com o nome %s nao esta registado",email));
         }
-        if(!fornecedores.containsKey(nome)){
-        throw new IllegalArgumentException(String.format("o fornecedor com o nome %s nao esta registado",nome));
-        }
-        
         for (Fornecedor fornecedor: listafornecedores){
             
-            if(fornecedor.getNome().equals(nome.trim())&& produtosdosfornecedores.get(fornecedor).isEmpty()){
+            if(fornecedor.getNome().equals(email.trim())&& produtosdosfornecedores.get(fornecedor).isEmpty()){
                 // verifica se o fornecedor tem produtos na lista   
                 
-                fornecedores.remove(nome.trim());
+                fornecedores.remove(email.trim());
                 produtosdosfornecedores.remove(fornecedor);
                 break;
             }else{
                 IO.print("nao da para tirar esse fornecedor");
             }
         }
-        
-    }
+        // 
+    } 
+    public void editarFornecedor(String email,String atributo){
+        if(!fornecedores.containsKey(email)|| (atributo.trim().toLowerCase().equals("nome")
+    ||atributo.trim().toLowerCase().equals("telefone")
+    ||atributo.trim().toLowerCase().equals("email"))){
+        throw new IllegalArgumentException("ou o nome nao foi preenchido ou o");
+        }
+        IO.println(fornecedores.get(email).toString());
+            Scanner scanner= new Scanner(System.in); 
+            switch (atributo.trim().toLowerCase()) {
+                case "nome":
+                    
+                    String emailnovo= scanner.nextLine(); 
+                    fornecedores.get(email).setEmail(emailnovo);
+                    
+                    break;
+                case "email":
+                    String novoemail= scanner.nextLine();
+                    Set<Fornecedor> fornecedors= produtosdosfornecedores.keySet();
+                    List<Produto> produtosantigos= new ArrayList<>();
+
+                    // caso  o utilizador queira colocar o nome de outro fornecedor como novo nome 
+                    for(Fornecedor fornecedor: fornecedors){
+                        if(fornecedor.getNome().equals(novoemail)){
+                            throw new IllegalArgumentException("esse fornecedor ja existe");
+                        }
+                        
+                    }
+                    adicionarFornecedor(fornecedores.get(email).getNome(),novoemail,fornecedores.get(email).getTelefone());
+                    for(Fornecedor fornecedor: fornecedors){
+                        if(fornecedor.getEmail().equals(email)){
+                            produtosantigos.addAll(produtosdosfornecedores.get(fornecedor));
+                            produtosdosfornecedores.get(fornecedor).clear();
+                            removerfornecedor(email);
+                            break;
+                        }
+                        
+                    }
+                    for(Fornecedor fornecedor: fornecedors){
+                        if(fornecedor.getEmail().equals(email)){
+                            produtosdosfornecedores.get(fornecedor).addAll(produtosantigos);
+                            break;
+                        }
+                    }
+
+                    break;
+                case "telefone":
+                    String telefonenovo= scanner.nextLine(); 
+                    fornecedores.get(email).setTelefone(telefonenovo);
+                    break;
+                default:
+                    break;
+            }
+            scanner.close();
+        }
     
 
+
     // mostra o fornecedor que tem aquele nome 
-    public Fornecedor verpornome(String nome){
-        if(!fornecedores.containsKey(nome.trim().toUpperCase())){
+    public Fornecedor verpornome(String email){
+        if(!fornecedores.containsKey(email.trim().toUpperCase())){
             throw new IllegalArgumentException("Esse fornecedor nao existe");
         }
-        return fornecedores.get(nome.trim().toUpperCase());
+        return fornecedores.get(email.trim().toUpperCase());
     }
 
   public ArrayList<Fornecedor>  getfornecedores(int valor) { 
@@ -107,5 +163,4 @@ public class FornecedorHandler{
    }
         return new ArrayList(mostrar_fornecedores.subList(0, valor)); 
     }
-
 }

@@ -1,8 +1,9 @@
 package codigo.dto;
 
+import java.util.List;
+
 public class UtilizadorDTO {
-    public String username;
-    public String email;
-    public String password;
-    public String papel;
+    public String nome, email, password;
+    public List<String> permissoes;
+    public String cargo;  // ADMINISTRADOR, GESTOR_LOG, etc.
 }

@@ -1,40 +1,50 @@
 package codigo.app;
 
-import codigo.app.bootstrap.DataLoader;
+import codigo.app.bootstrap.MasterDataLoader;
 import codigo.handlers.*;
-import java.io.InputStream;
+import codigo.repositories.*;
+import codigo.resources.JsonService;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        // Instanciar handlers
-        ProdutoHandler produtoH = new ProdutoHandler();
-        FornecedorHandler fornecedorH = new FornecedorHandler();
-        LojaHandler lojaH = new LojaHandler();
-        InventarioHandler inventarioH = new InventarioHandler();
-        UtilizadorHandler utilizadorH = new UtilizadorHandler();
+        try {
 
-        // Loader
-        DataLoader loader = new DataLoader(
-                produtoH,
-                fornecedorH,
-                lojaH,
-                inventarioH,
-                utilizadorH
-        );
+            // REPOSITÓRIOS
+            ProdutoRepository produtoRepo = new ProdutoRepository();
+            UtilizadorRepository utilizadorRepo = new UtilizadorRepository();
+            FornecedorRepository fornecedorRepo = new FornecedorRepository();
+            LojaRepository lojaRepo = new LojaRepository();
 
-        // Ler JSON do resources
-        InputStream is =
-            Main.class.getResourceAsStream("/dados_iniciais.json");
+            // HANDLERS
+            ProdutoHandler produtoHandler = new ProdutoHandler(produtoRepo);
+            UtilizadorHandler utilizadorHandler = new UtilizadorHandler(utilizadorRepo);
+            FornecedorHandler fornecedorHandler = new FornecedorHandler(fornecedorRepo);
+            LojaHandler lojaHandler = new LojaHandler(lojaRepo);
 
-        if (is == null) {
-            System.err.println("❌ ficheiro JSON não encontrado!");
-            return;
+            // JSON Service
+            JsonService jsonService = new JsonService();
+
+            // BOOTSTRAP
+            MasterDataLoader loader = new MasterDataLoader(
+                    jsonService,
+                    produtoHandler,
+                    utilizadorHandler,
+                    fornecedorHandler,
+                    lojaHandler
+            );
+
+            loader.loadAll(); // 🚀 carrega tudo
+
+            System.out.println("\n🔥 Sistema pronto para uso!\n");
+
+            // Aqui começa a tua UI / Menu principal
+            new MenuPrincipal(produtoHandler, lojaHandler, utilizadorHandler).run();
+
+        } catch (Exception e) {
+            System.err.println("Erro ao iniciar sistema: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        loader.carregar(is);
-
-        System.out.println("\nSistema iniciado ✔");
     }
 }
