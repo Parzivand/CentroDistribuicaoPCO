@@ -1,6 +1,6 @@
 package codigo.domain.enums;
 
-public enum Role {
+public enum Cargo {
     ADMINISTRADOR,
     GESTOR_lOG,
     OPERDADOR_ARM,

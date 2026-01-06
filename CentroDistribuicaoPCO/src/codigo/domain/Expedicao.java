@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import codigo.domain.enums.EstadoExpedicao;
+import codigo.domain.enums.Estadoencomenda;
+
 public class Expedicao {
 
     private String id;
-    private String estado; //POR_PREPARAR, PREPARADA, POR_EXPEDIR, EXPEDIDA
+    private EstadoExpedicao estado; //POR_PREPARAR, PREPARADA, POR_EXPEDIR, EXPEDIDA
 
     private String localizacao;
     private final List<Encomenda> encomendas = new ArrayList<>();
@@ -16,7 +19,7 @@ public class Expedicao {
     public Expedicao(String id, String localizacaoInicial) {
         this.id = id;
         this.localizacao = localizacaoInicial;
-        this.estado = "POR_PREPARAR";
+        this.estado = EstadoExpedicao.POR_PREPARAR;
     }
 
     public void associarEncomenda(Encomenda encomenda) {
@@ -27,7 +30,7 @@ public class Expedicao {
             throw new IllegalStateException("Só é possível associar encomendas quando o estado é POR_PREPARAR");
         }
         encomendas.add(encomenda);
-        encomenda.setEstado("RESERVADA");
+        encomenda.setEstado(Estadoencomenda.RESERVADA);
         gerarTarefasSelecao(encomenda);
     }
 
@@ -53,13 +56,13 @@ public class Expedicao {
                     tarefas.size(), getTarefasPendentes())
             );
         }
-        this.estado = "PREPARADA";
+        this.estado = EstadoExpedicao.PREPARADA;
     }  
 
     // Move expedição só se estiver PREPARADA
 
     public void moverPara(String novaLocalizacao) {
-        if (!"PREPARADA".equals(estado)) {
+        if (!EstadoExpedicao.PREPARADA.equals(estado)) {
             throw new IllegalStateException(
                 "Expedição deve estar PREPARADA para mover (estado atual: " + estado + ")"
             );
@@ -69,8 +72,9 @@ public class Expedicao {
         }
         
         this.localizacao = novaLocalizacao.trim();
-        this.estado = "POR_EXPEDIR";
+        this.estado = EstadoExpedicao.POR_EXPEDIR;
     }
+    
 
 
     // getters/setters
@@ -90,11 +94,11 @@ public class Expedicao {
 
 
     public String getId() { return id; }
-    public String getEstado() { return estado; }
+    public EstadoExpedicao getEstado() { return estado; }
     public String getLocalizacao() { return localizacao; }
     public List<Encomenda> getEncomendas() { return new ArrayList<>(encomendas); }
 
-    public void setEstado(String estado) { this.estado = estado; }
+    public void setEstado(EstadoExpedicao estado) { this.estado = estado; }
     public void setLocalizacao(String localizacao) { this.localizacao = localizacao; }
 
 

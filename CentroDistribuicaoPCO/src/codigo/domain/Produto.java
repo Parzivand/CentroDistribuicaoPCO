@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import codigo.domain.enums.TipoRestricoes;
+import codigo.domain.enums.TipoLocalizacao;
+
 
 public class Produto{
 
@@ -17,12 +20,12 @@ public class Produto{
     private String categoria;       // ex.: "COM = comida", "ELE = eletronico", "ROU = roupa"
     private Date validade;
 
-    private final List<String> restricoes = new ArrayList<>();  // Lista de restrições (ex.: "frio", "perigoso", "validadeObrigatoria")
+    private final List<TipoRestricoes> restricoes = new ArrayList<>();  // Lista de restrições (ex.: "frio", "perigoso", "validadeObrigatoria")
 
     // Construtores
 
     public Produto(String nome, String SKU, String unidadeMedida,
-                   List<String> restricoes,Date validade, String categoria) {
+                   List<TipoRestricoes> restricoes,Date validade, String categoria) {
         this.nome = nome;
         this.SKU = SKU;
         this.unidadeMedida = unidadeMedida;
@@ -34,7 +37,7 @@ public class Produto{
     }
 
     public Produto(String nome, String SKU, String unidadeMedida,
-                   List<String> restricoes, String categoria) {
+                   List<TipoRestricoes> restricoes, String categoria) {
         this(nome, SKU, unidadeMedida, restricoes, null ,categoria);
         
     }
@@ -53,11 +56,11 @@ public class Produto{
     /**
      * Devolve lista imutável para não alterarem as restrições por fora.
      */
-    public List<String> getRestricoes() {
+    public List<TipoRestricoes> getRestricoes() {
         return Collections.unmodifiableList(restricoes);
     }
 
-    public void setRestricoes(List<String> restricoes) {
+    public void setRestricoes(List<TipoRestricoes> restricoes) {
         this.restricoes.clear();
         if (restricoes != null) {
             this.restricoes.addAll(restricoes);
@@ -68,13 +71,13 @@ public class Produto{
         return this.SKU.compareTo(o.SKU);
     } 
     
-    public void adicionarRestricao(String restricao) {
-        if (restricao != null && !restricao.isBlank() && !restricoes.contains(restricao)) {
+    public void adicionarRestricao(TipoRestricoes restricao) {
+        if (restricao != null && !restricoes.contains(restricao)) {
             restricoes.add(restricao);
         }
     }
 
-    public void removerRestricao(String restricao) {
+    public void removerRestricao(TipoRestricoes restricao) {
         restricoes.remove(restricao);
     }
 

@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import codigo.domain.enums.Estadoencomenda;
+
 public class Encomenda {
     
     private String referencia;
     private Loja loja;
     private int prioridade;      // 1 (baixa) a 5 (alta)
-    private String estado;       // POR_PREPARAR, PREPARADA, POR_EXPEDIR, EXPEDIDA
+    private Estadoencomenda estado;       // POR_PREPARAR, PREPARADA, POR_EXPEDIR, EXPEDIDA
     private final List<LinhaEncomenda> linhas = new ArrayList<>();
 
     public Encomenda(String referencia, Loja loja, int prioridade) {
@@ -20,7 +22,7 @@ public class Encomenda {
         this.referencia = referencia;
         this.loja = loja;
         this.prioridade = prioridade;
-        this.estado = "POR_PREPARAR";
+        this.estado = Estadoencomenda.POR_PREPARAR;
     }
 
     // Adicionar linha à encomenda
@@ -32,11 +34,11 @@ public class Encomenda {
     public String getReferencia() { return referencia; }
     public Loja getLoja() { return loja; }
     public int getPrioridade() { return prioridade; }
-    public String getEstado() { return estado; }
+    public Estadoencomenda getEstado() { return estado; }
     public List<LinhaEncomenda> getLinhas() { return new ArrayList<>(linhas); }
 
     // Setters
-    public void setEstado(String estado) { this.estado = estado; }
+    public void setEstado(Estadoencomenda estado) { this.estado = estado; }
     
     // Métodos úteis para prioridade
     public boolean isAltaPrioridade() {
@@ -62,10 +64,15 @@ public class Encomenda {
    
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
+        if (this == obj) return true;
+        if (!(obj instanceof Expedicao)) return false;
         Encomenda encomenda = (Encomenda) obj;
-        return Objects.equals(encomenda, obj);
+        return Objects.equals(referencia, encomenda.getReferencia());
 
+    }
+    @Override 
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return Objects.hashCode(referencia);
     }
 }

@@ -1,7 +1,7 @@
 package codigo.handlers;
 
 import codigo.domain.Utilizador;
-import codigo.domain.enums.Role;
+import codigo.domain.enums.Cargo;
 
 import java.util.*;
 public class UtilizadorHandler {
@@ -13,7 +13,7 @@ public class UtilizadorHandler {
     
     }
 
-    public Utilizador dadosUtilizador(String nome, String email, String password, ArrayList<String> permissoes,Role cargo) {
+    public Utilizador dadosUtilizador(String nome, String email, String password, ArrayList<String> permissoes,Cargo cargo) {
         if(password==null || nome== null ||email==null || cargo==null){
             throw new IllegalArgumentException("falta de  informação");
         }

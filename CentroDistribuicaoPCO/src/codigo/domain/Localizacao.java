@@ -5,27 +5,32 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ListFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import codigo.domain.enums.TipoLocalizacao;
+import codigo.domain.enums.TipoRestricoes;
 
 public class Localizacao {
 
     // Atributos básicos
 
-    private String tipo; // estante, solo, frigorifico...
+    private TipoLocalizacao tipo; // estante, solo, frigorifico...
     private int capacidadeMaxima; 
-    private String restricoesSuportadas; // frio, perigoso...
+    private ArrayList<TipoRestricoes> restricoesSuportadas; // frio, perigoso...
     private  String codigo;
     // Inventário desta localização: Produto -> quantidade
     private final Map<Produto,Integer> stock = new HashMap<>(); 
     
 
     // Construtor
-    public Localizacao( String codigo,String tipo, int capacidadeMaxima, String restricoesSuportadas) {
+    public Localizacao( String codigo,TipoLocalizacao tipo, int capacidadeMaxima,
+         ArrayList<TipoRestricoes> restricoesSuportadas) {
+        
         this.codigo=codigo;
         this.tipo = tipo;
         this.capacidadeMaxima = capacidadeMaxima;
@@ -75,9 +80,9 @@ public class Localizacao {
      * Verifica se esta localização suporta todas as restrições do produto.
      */
     private void verificarCompatibilidade(Produto produto) {
-        List<String> restricoesProduto = produto.getRestricoes();
+        List<TipoRestricoes> restricoesProduto = produto.getRestricoes();
         
-        for (String restricao : restricoesProduto) {
+        for (TipoRestricoes restricao : restricoesProduto) {
             if (!suportaRestricao(restricao)) {
                 throw new IllegalArgumentException(
                     String.format("Localização %s não suporta '%s' (produto: %s)", 
@@ -90,14 +95,10 @@ public class Localizacao {
     /**
      * Verifica se esta localização suporta uma restrição específica.
      */
-    private boolean suportaRestricao(String restricao) {
-        if (restricoesSuportadas == null || restricoesSuportadas.isEmpty()) {
-            return restricao.isEmpty();
+    private boolean suportaRestricao(TipoRestricoes restricao) { 
+         // Compara separando por vírgula ou espaço
+        return restricoesSuportadas.contains(restricao);
         }
-        // Compara separando por vírgula ou espaço
-        String[] suportadas = restricoesSuportadas.toLowerCase().split("[,\\s]+");
-        return Arrays.stream(suportadas).anyMatch(r -> r.trim().equalsIgnoreCase(restricao));
-    }
 
 
 
@@ -108,14 +109,16 @@ public class Localizacao {
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public TipoLocalizacao getTipo() { return tipo; }
+    public void setTipo(TipoLocalizacao tipo) { this.tipo = tipo; }
 
     public int getCapacidadeMaxima() { return capacidadeMaxima; }
     public void setCapacidadeMaxima(int capacidadeMaxima) { this.capacidadeMaxima = capacidadeMaxima; }
 
-    public String getRestricoesSuportadas() { return restricoesSuportadas; }
-    public void setRestricoesSuportadas(String restricoesSuportadas) { this.restricoesSuportadas = restricoesSuportadas; }
+    public ArrayList<TipoRestricoes> getRestricoesSuportadas() { return restricoesSuportadas; }
+    // altera as restricoes que suporta
+    public void addRestricoesSuportadas(TipoRestricoes restricoesSuportadas) { this.restricoesSuportadas.add(restricoesSuportadas); }
+    public void removeRestricoesSuportadas(TipoRestricoes restricoesSuportadas) { this.restricoesSuportadas.remove(restricoesSuportadas); }
 
     @Override
     public String toString() {

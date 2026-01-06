@@ -1,6 +1,6 @@
 package codigo.domain.enums;
 
-public enum tipoLocalizacao {
+public enum TipoLocalizacao {
     DOCA,
     FRIGORIFICO,
     SOLO,

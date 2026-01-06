@@ -1,6 +1,7 @@
 package codigo.handlers;
 
 import codigo.domain.Produto;
+import codigo.domain.enums.TipoRestricoes;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +65,7 @@ public class ProdutoHandler {
     public Produto criarProduto(String nome,
                                 String categoria,
                                 String unidadeMedida,
-                                List<String> restricoes,
+                                List<TipoRestricoes> restricoes,
                                 Date validade) {
 
         String skuGerado = proximoSkuParaCategoria(categoria);
@@ -93,7 +94,7 @@ public class ProdutoHandler {
     public Produto criarProduto(String nome,
                                 String categoria,
                                 String unidadeMedida,
-                                List<String> restricoes) {
+                                List<TipoRestricoes> restricoes) {
         return criarProduto(nome, categoria, unidadeMedida, restricoes, null);
     }
 

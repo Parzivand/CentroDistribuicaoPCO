@@ -28,8 +28,8 @@ DIA 0 (Hoje, 30min JUNTOS)
   - EstadoEncomenda ta
   - EstadoExpedicao 
   - TipoRestricao ta 
-  - TipoLocalizacao  
-  - PapelUtilizador )  
+  - TipoLocalizacao  ta 
+  - PapelUtilizador ta )  
 
   FEITO
 

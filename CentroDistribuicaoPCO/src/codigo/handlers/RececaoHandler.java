@@ -11,6 +11,7 @@ import codigo.domain.Localizacao;
 import codigo.domain.Rececao;
 import codigo.domain.Produto;
 import codigo.domain.StockItem;
+import codigo.domain.enums.estadoStock;
 public class  RececaoHandler{
     private ArrayList<Rececao> rececoes;
 
@@ -111,10 +112,10 @@ public class  RececaoHandler{
             for(LinhaRececao linhas : rececoes.getLast().getLinhas()){
                 if(linhas.getEstado()=="NC"){
                itens_no_Stock.add(new StockItem(linhas.getProduto(),linhas.getQuantidadeRecebida(),linhas.getLote(), null));
-               itens_no_Stock.getLast().setEstado("Quarentena");                
+               itens_no_Stock.getLast().setEstado(estadoStock.QUARENTENA);                
                 }else{
                     itens_no_Stock.add(new StockItem(linhas.getProduto(),linhas.getQuantidadeRecebida(),linhas.getLote(), null));
-               itens_no_Stock.getLast().setEstado("Disponivel");
+               itens_no_Stock.getLast().setEstado(estadoStock.DISPONIVEL);
                 }
 
             }

@@ -1,13 +1,15 @@
 package codigo.domain;
 import java.time.LocalDate;
 
+import codigo.domain.enums.estadoStock;
+
 public class StockItem {
 
     Produto produto;
     String lote;
     String localizacao;
     int quantidade;
-    private String  estado; // Disponivel, Quarentena, Reservado
+    private estadoStock  estado; // Disponivel, Quarentena, Reservado
     // LocalDate validade;.... tambem acho que nao 
 
     public StockItem(Produto produto, int quantidade,String lote,String  localizacao){
@@ -22,8 +24,8 @@ public class StockItem {
     public  void setQuantidade(int quantidade){ this.quantidade= quantidade;}
     public String getLocalizacao(){return localizacao;}
     public void setLocalizacao(String novaLocalizacao){localizacao=novaLocalizacao;}
-    public String getEstado(){return estado;}
-    public void setEstado(String estado){this.estado=estado;}
+    public estadoStock getEstado(){return estado;}
+    public void setEstado(estadoStock estado){this.estado=estado;}
     public Produto geProduto(){return produto;}
     }
 
