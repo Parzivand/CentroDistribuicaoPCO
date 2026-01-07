@@ -55,7 +55,7 @@ No EncomendaHandler (UC09), garantir logo:
 
 Pessoa B (Suporte - 3h):
 - FornecedorHandler CRUD (UC03/19-20) [file:10] feito 
-- LojaHandler CRUD (UC22) [file:8] feito i guess 
+- LojaHandler CRUD (UC22) [file:8] feito 
 Merge: Teste receção → stock → encomenda simples
 
 
