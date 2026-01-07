@@ -144,11 +144,11 @@ public class FornecedorHandler{
 
 
     // mostra o fornecedor que tem aquele nome 
-    public Fornecedor verpornome(String email){
+    public String verpornome(String email){
         if(!fornecedores.containsKey(email.trim().toUpperCase())){
             throw new IllegalArgumentException("Esse fornecedor nao existe");
         }
-        return fornecedores.get(email.trim().toUpperCase());
+        return fornecedores.get(email.trim().toUpperCase()).toString();
     }
 
   public ArrayList<Fornecedor>  getfornecedores(int valor) { 

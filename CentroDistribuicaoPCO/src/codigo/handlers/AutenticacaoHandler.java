@@ -21,7 +21,7 @@ public class AutenticacaoHandler{
     }
 
     public void registar_utilizador(Utilizador utilizador){
-      utilizadores.dadosUtilizador(utilizador.getNome(),utilizador.getEmail(), utilizador.getPassword(),utilizador.getPermissoes(),
-      utilizador.getcargo());
+     // utilizadores.dadosUtilizador(utilizador.getNome(),utilizador.getEmail(), utilizador.getPassword(),utilizador.getPermissoes(),
+      //utilizador.getcargo());
     }
 }
