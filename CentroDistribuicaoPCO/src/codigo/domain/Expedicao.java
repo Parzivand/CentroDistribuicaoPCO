@@ -26,7 +26,7 @@ public class Expedicao {
         if(encomenda == null) {
             throw new IllegalArgumentException("Encomenda não pode ser null");
         }
-        if(!"POR_PREPARAR".equals(encomenda.getEstado())) {
+        if(!Estadoencomenda.POR_PREPARAR.equals(encomenda.getEstado())) {
             throw new IllegalStateException("Só é possível associar encomendas quando o estado é POR_PREPARAR");
         }
         encomendas.add(encomenda);
@@ -40,14 +40,12 @@ public class Expedicao {
         for(LinhaEncomenda linha : encomenda.getLinhas()) {
             String tarefaId = id + "-T" + (tarefas.size() + 1);
             Tarefa tarefa = new Tarefa(tarefaId, String.format("Selecionar %d %s (%s) de %s",
-                linha.getQuantidade(), linha.getProduto().getUnidadeMedida(), 
-                linha.getProduto().getSKU(), localizacao));
+                linha.getQuantidade(), linha.getProduto(),localizacao));
             tarefas.add(tarefa);
         }
     }
 
     // Conclui preparação só se TODAS tarefas estiverem feitas
-
     public void concluirPreparacao() {
         boolean todasConcluidas = tarefas.stream().allMatch(Tarefa::isConcluida);
         if (!todasConcluidas) {

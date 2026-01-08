@@ -24,8 +24,6 @@ public class FornecedorHandler{
                 // adiciona no mapa dos produtosdosfornecedores 
                 // se ja existir o nome como chave ele nao adiciona ao map
                   
-                //oki 
-
             }else{
                 throw new IllegalArgumentException("falta elementos");            
             }
@@ -45,6 +43,7 @@ public class FornecedorHandler{
             }
         }    
     }
+
     public void desassociarproduto(Produto produto,String email ){
      if(produto==null|| email==null||!fornecedores.containsKey(email)){
             throw new IllegalArgumentException("argumentos invalidos");
@@ -74,7 +73,7 @@ public class FornecedorHandler{
         }
         for (Fornecedor fornecedor: listafornecedores){
             
-            if(fornecedor.getNome().equals(email.trim())&& produtosdosfornecedores.get(fornecedor).isEmpty()){
+            if(fornecedor.getEmail().equals(email.trim())&& produtosdosfornecedores.get(fornecedor).isEmpty()){
                 // verifica se o fornecedor tem produtos na lista   
                 
                 fornecedores.remove(email.trim());

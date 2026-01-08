@@ -11,6 +11,8 @@ import codigo.domain.Localizacao;
 import codigo.domain.Rececao;
 import codigo.domain.Produto;
 import codigo.domain.StockItem;
+import codigo.domain.enums.Estadoencomenda;
+import codigo.domain.enums.TipoRestricoes;
 import codigo.domain.enums.estadoStock;
 public class  RececaoHandler{
     private ArrayList<Rececao> rececoes;
@@ -73,7 +75,7 @@ public class  RececaoHandler{
 
         return new ArrayList<>(sublista);
     }
-    
+
 
     
     // para registar  as rececoes ou seja colocar as linhas  e nao conformidades 
@@ -86,39 +88,54 @@ public class  RececaoHandler{
         , String Descricao){
             if(produto==null || quantidade<0 || lote==null){
                 throw new IllegalArgumentException("falta de informacao no registo da rececao");
-
+            
+            }else if(produto.getValidade()==null && produto.getRestricoes().contains(TipoRestricoes.EXIGE_VALIDADE)){
+                    rececoes.getLast().getLinhas().getLast().setEstado("NC");
+                    rececoes.getLast().adicionarLinha(produto, lote, quantidade);
             }else{
-                rececoes.getLast().adicionarLinha(produto, lote, quantidade);
-                rececoes.getLast().getLinhas().getLast().setnaoconformidades(tipo, Descricao);
+                    rececoes.getLast().adicionarLinha(produto, lote, quantidade);
+                    rececoes.getLast().getLinhas().getLast().setEstado("NORMAL");
             }
+            rececoes.getLast().getLinhas().getLast().setnaoconformidades(tipo, Descricao);
         }
+
+        
         // o produto de uma linha da  rececao  que está a ser registada pode nao ter nao conformidades    
-        public void adicionar_linhas_naoconformidades(Produto produto,int quantidade,String lote){
+        public void adicionar_linhas_naoconformidades(Produto produto,int quantidade,String lote,Localizacao localizacao){
+            int espacodisponivel= localizacao.getCapacidadeMaxima()-localizacao.getQuantidade(produto);
             if(produto==null || quantidade<0 || lote==null){
                 throw new IllegalArgumentException("falta de informacao no registo da rececao");
+            // se a validade tiver  mal  é guardado  em  quarentena 
+            }else if(produto.getValidade()==null && produto.getRestricoes().contains(TipoRestricoes.EXIGE_VALIDADE)){
+                rececoes.getLast().adicionarLinha(produto, lote, quantidade);
+                rececoes.getLast().getLinhas().getLast().setEstado("NC");
+                localizacao.adicionarquarentena(produto, quantidade);
+                // se o produto  tiver  a validade em dia ou nao tenha  validade mas a quantidade a armazenar seja maior que a disponivel na 
+                //localizacao  é colocada em armazenar 
+            }else if(quantidade>espacodisponivel){
+                rececoes.getLast().adicionarLinha(produto, lote, quantidade);
+                localizacao.adicionar(produto, espacodisponivel);
+                rececoes.getLast().getLinhas().getLast().setEstado("A ARMAZENAR");
+                // nao tenha  problemas com a validade nem  com a quantidade é adicionado no  stock a linha fica com estado  de disponivel 
+            }else{
+                rececoes.getLast().adicionarLinha(produto, lote, quantidade);
+                localizacao.adicionar(produto, quantidade);
+                rececoes.getLast().getLinhas().getLast().setEstado("DISPONIVEL");
+            }
 
-            }else{rececoes.getLast().adicionarLinha(produto, lote, quantidade);}
+            }
         
-        }
-        public String resumo_do_registo(){
+        
+        // nao muda 
+        public String ResumoRegisto(){
             return String.format("rececao %s\n"+
             "numero total de itens: %s\n"+
             "itens com nao conformidades: %s\n"
             ,rececoes.getLast().getIdRececao(),rececoes.getLast().getLinhas().size(),rececoes.getLast().listarProdutosquarentena());
         }
-        // atualiza o stock ou seja 
-        public  ArrayList<StockItem> atualizarstockrececoes(){
-            ArrayList<StockItem> itens_no_Stock = new ArrayList<>(); 
-            for(LinhaRececao linhas : rececoes.getLast().getLinhas()){
-                if(linhas.getEstado()=="NC"){
-               itens_no_Stock.add(new StockItem(linhas.getProduto(),linhas.getQuantidadeRecebida(),linhas.getLote(), null));
-               itens_no_Stock.getLast().setEstado(estadoStock.QUARENTENA);                
-                }else{
-                    itens_no_Stock.add(new StockItem(linhas.getProduto(),linhas.getQuantidadeRecebida(),linhas.getLote(), null));
-               itens_no_Stock.getLast().setEstado(estadoStock.DISPONIVEL);
-                }
+        // mudar para ser no stock da localizacao 
 
-            }
-            return  new ArrayList<>(itens_no_Stock);
-           }}
+    
+    }
+
     

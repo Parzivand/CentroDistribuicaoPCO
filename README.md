@@ -42,7 +42,7 @@ Pessoa A (Fluxo Principal - 3h):
 - EncomendaHandler (UC09 reserva FIFO) [file:2]
 
 (
-No EncomendaHandler (UC09), garantir logo:
+No EncomendaHandler (UC09), garantir logo: acho que ta feito  
 
 - Reserva ≠ consumo de stock
 
@@ -54,8 +54,8 @@ No EncomendaHandler (UC09), garantir logo:
 
 
 Pessoa B (Suporte - 3h):
-- FornecedorHandler CRUD (UC03/19-20) [file:10] feito 
-- LojaHandler CRUD (UC22) [file:8] feito 
+- FornecedorHandler CRUD (UC03/19-20) [file:10]- Feito 
+- LojaHandler CRUD (UC22) [file:8]- Feito 
 Merge: Teste receção → stock → encomenda simples
 
 
@@ -72,9 +72,9 @@ Merge: Fluxo completo Receção → Expedição!
 
 - Criar desde logo:
 
-- classe Tarefa
+- classe Tarefa feito
 
-- histórico simples de movimentações)
+- histórico simples de movimentações) 
 
 
 DIA 3

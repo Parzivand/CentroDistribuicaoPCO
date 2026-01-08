@@ -18,18 +18,19 @@ import codigo.domain.enums.TipoRestricoes;
 public class Localizacao {
 
     // Atributos básicos
-
+    
     private TipoLocalizacao tipo; // estante, solo, frigorifico...
     private int capacidadeMaxima; 
     private ArrayList<TipoRestricoes> restricoesSuportadas; // frio, perigoso...
     private  String codigo;
     // Inventário desta localização: Produto -> quantidade
-    private final Map<Produto,Integer> stock = new HashMap<>(); 
+    private final Map<Produto,Integer> stock = new HashMap<>();
+    private Map<Produto,Integer> quarentena= new HashMap<>();
     
 
     // Construtor
     public Localizacao( String codigo,TipoLocalizacao tipo, int capacidadeMaxima,
-         ArrayList<TipoRestricoes> restricoesSuportadas) {
+        ArrayList<TipoRestricoes> restricoesSuportadas) {
         
         this.codigo=codigo;
         this.tipo = tipo;
@@ -38,10 +39,12 @@ public class Localizacao {
     }
 
     // Métodos de inventário
-    public int getQuantidade(Produto produto) {
+    public int getQuantidade(Produto produto){
         return stock.getOrDefault(produto, 0);
     }
-   
+    public int getQuantidadequarentena (Produto produto){
+        return quarentena.getOrDefault(produto, 0);
+    }
     
     public void adicionar(Produto produto, int quantidade) {
            
@@ -53,6 +56,17 @@ public class Localizacao {
 
         int atual = getQuantidade(produto);
         stock.put(produto, atual + quantidade);
+    }
+    public void adicionarquarentena(Produto produto, int quantidade) {
+           
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser > 0");
+        }
+              
+        verificarCompatibilidade(produto);
+
+        int atual = getQuantidade(produto);
+        quarentena.put(produto,atual + quantidade);
     }
 
     public void remover(Produto produto, int quantidade) {
@@ -74,35 +88,32 @@ public class Localizacao {
     public Map<Produto, Integer> getStock() {
         return Collections.unmodifiableMap(stock);
     }
-
-
+    public Map<Produto, Integer> getQuarentena() {
+        return Collections.unmodifiableMap(quarentena);
+    }
+    
     /**
      * Verifica se esta localização suporta todas as restrições do produto.
      */
-    private void verificarCompatibilidade(Produto produto) {
+    private boolean verificarCompatibilidade(Produto produto) { 
         List<TipoRestricoes> restricoesProduto = produto.getRestricoes();
-        
+     
         for (TipoRestricoes restricao : restricoesProduto) {
-            if (!suportaRestricao(restricao)) {
-                throw new IllegalArgumentException(
-                    String.format("Localização %s não suporta '%s' (produto: %s)", 
-                        codigo, restricao, produto.getSKU())
-                );
-            }
+            if (!suportaRestricao(restricao)){
+                return false;
+            }   
         }
+        return true;
     }
    
     /**
      * Verifica se esta localização suporta uma restrição específica.
      */
     private boolean suportaRestricao(TipoRestricoes restricao) { 
-         // Compara separando por vírgula ou espaço
         return restricoesSuportadas.contains(restricao);
         }
 
-
-
-
+    
 
     // Getters/Setters básicos
 
@@ -115,7 +126,7 @@ public class Localizacao {
     public int getCapacidadeMaxima() { return capacidadeMaxima; }
     public void setCapacidadeMaxima(int capacidadeMaxima) { this.capacidadeMaxima = capacidadeMaxima; }
 
-    public ArrayList<TipoRestricoes> getRestricoesSuportadas() { return restricoesSuportadas; }
+    public List<TipoRestricoes> getRestricoesSuportadas() { return restricoesSuportadas; }
     // altera as restricoes que suporta
     public void addRestricoesSuportadas(TipoRestricoes restricoesSuportadas) { this.restricoesSuportadas.add(restricoesSuportadas); }
     public void removeRestricoesSuportadas(TipoRestricoes restricoesSuportadas) { this.restricoesSuportadas.remove(restricoesSuportadas); }

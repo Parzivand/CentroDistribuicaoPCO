@@ -26,8 +26,8 @@ public class Encomenda {
     }
 
     // Adicionar linha à encomenda
-    public void adicionarLinha(Produto produto, int quantidade){
-        linhas.add(new LinhaEncomenda(produto, quantidade));
+    public void adicionarLinha(String nome, int quantidade){
+        linhas.add(new LinhaEncomenda(nome, quantidade));
     } 
 
     // Getters
