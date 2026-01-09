@@ -2,17 +2,23 @@ package codigo.app;
 
 import codigo.handlers.UtilizadorHandler;
 import codigo.handlers.ProdutoHandler;
+import codigo.handlers.RececaoHandler;
 
 import java.lang.classfile.instruction.SwitchCase;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import codigo.domain.Localizacao;
 import codigo.domain.Utilizador;
 import codigo.domain.enums.Cargo;
+import codigo.domain.enums.TipoLocalizacao;
 import codigo.domain.enums.TipoRestricoes;
 import codigo.handlers.FornecedorHandler;
+import codigo.handlers.InventarioHandler;
 import codigo.handlers.LojaHandler;
+import codigo.handlers.Encomendahandler;
+import codigo.handlers.ExpedicaoHandler;
 
 public class MenuPrincipal {
     // Atributos
@@ -20,16 +26,25 @@ public class MenuPrincipal {
     private UtilizadorHandler utilizadores;
     private LojaHandler lojaHandler;
     private FornecedorHandler fornecedorHandler;
-    
+    private InventarioHandler inventarioHandler;
+    private RececaoHandler rececaoHandler;
+    private ExpedicaoHandler expediacaohandler;
+    private Encomendahandler encomendahandler;
     // Construtor
     public MenuPrincipal(ProdutoHandler produtoHandler, UtilizadorHandler utilizadorHandler,LojaHandler LojaHandler,
-        FornecedorHandler fornecedorHandler ){
+        FornecedorHandler fornecedorHandler,InventarioHandler inventarioHandler,RececaoHandler rececaoHandler,
+    ExpedicaoHandler expediacaohandler,Encomendahandler encomendahandler){
         this.utilizadores= utilizadorHandler;
         this.lojaHandler= lojaHandler;
         this.produtoHandler= produtoHandler;
         this.fornecedorHandler= fornecedorHandler;
+        this.expediacaohandler= expediacaohandler;
+        this.inventarioHandler=inventarioHandler;
+        this.rececaoHandler=rececaoHandler;
+        this.encomendahandler=encomendahandler;
+
     }
-    // onde  comeca o menu  principal 
+    // onde  comeca o menu  principal
     public void run(){
         
         Scanner scanner= new Scanner(System.in);
@@ -37,8 +52,8 @@ public class MenuPrincipal {
         boolean operacoes= true;
         Cargo cargo =UtilizadorAutenticado.getcargo();
         
-        switch (cargo) {
-            case Cargo.ADMINISTRADOR:
+        switch (cargo.toString()) {
+            case "ADMINISTRADOR":
                 while(operacoes){
                     String operacao= scanner.nextLine();
                     switch (operacao.trim().toLowerCase()) {  
@@ -207,21 +222,114 @@ public class MenuPrincipal {
                                     }
                                     break;
                         case "remover produto":// UC18
-                            System.out.print("\n sku do produto: ");
+                            System.out.print("sku do produto: ");
                             String skup= scanner.next();
                             produtoHandler.removerProduto(skup);
                             break; 
 
                         case"criar fornecedor":
-
+                            System.out.print("nome: ");
+                            String nomefornecedor= scanner.nextLine();
+                            System.out.print("\nemail: ");
+                            String emailfornecedor= scanner.nextLine();
+                            System.out.print("\ntelefone: ");
+                            String telefonefornecedor= scanner.nextLine();
+                            fornecedorHandler.adicionarFornecedor(nomefornecedor,emailfornecedor,telefonefornecedor);    
                         break;
+                        case "editar fornecedor":
+                            System.out.print("email: ");
+                            String emailfornecedore= scanner.next();
+                            
+                            System.out.print("oq pretende editar: ");
+                            String editar= scanner.next();
+                            fornecedorHandler.editarFornecedor(emailfornecedore,editar);
+                        break;
+                        
+                        case "remover fornecedor":
+                            String emaildofornecedor = scanner.next();
+                            fornecedorHandler.removerfornecedor(emaildofornecedor);
+                        break;
+                                    
+                        case"adicionar loja":
+                            
+                            System.out.print("nome: ");
+                            String nomeloja= scanner.nextLine();
+                            
+                            System.out.print("area atuacao: ");
+                            String arealoja= scanner.next();
+                            
+                            System.out.print("morada: ");
+                            String moradaloja= scanner.nextLine();
+                            lojaHandler.adicionarLoja(nomeloja,arealoja, moradaloja);
+                        case"editar loja":
+                            
+                            System.out.print("area atuacao: ");
+                            String emailloja= scanner.next();
+                            
+                            System.out.print("morada: ");
+                            String mudaratributo= scanner.nextLine();    
+                            lojaHandler.editarLoja(emailloja, mudaratributo);
+                        case"remover loja":
+                            
+                            System.out.print("email: ");
+                            String codigoloja= scanner.next();    
+                            lojaHandler.RemoverLoja(codigoloja);
+                        break;
+
+                        case "adicionar localizacao":
+                            System.out.print("tipo: ");
+                            String tipoloc= scanner.next();
+                            System.out.print("tipo: ");
+                            int  capacidadeMaximaloc= scanner.nextInt();
+                            ArrayList<TipoRestricoes> restricoes= new ArrayList<>();
+                            while (true) {
+                                String restricao= scanner.next();
+                                restricoes.add(TipoRestricoes.valueOf(restricao.toUpperCase()));
+                                
+                                System.out.print("deseja continuar? ");
+                                String resposta2 = scanner.next();
+                                if(resposta2.equalsIgnoreCase("nao")){
+                                    break;
+                                }   
+                            }
+                            inventarioHandler.criarLocalizacao(TipoLocalizacao.valueOf(tipoloc),capacidadeMaximaloc,restricoes);  
+                            break;
+                        case"editar localizacao":
+                            System.out.print("codigo: ");
+                            String codigoloc= scanner.next();
+
+                            System.out.print("alteracao: ");
+                            String alteracao= scanner.next();
+
+                            System.out.print("capacidademaxima/adicionar restricao:/ remover restricao/ tipo: ");
+                            String valor= scanner.next();
+                            inventarioHandler.editarLocalizacao(codigoloc, alteracao, valor);
+                             break;   
+
+                        case"remover localizacao":
+                            System.out.print("codigo: ");
+                            String codigolocalizacao= scanner.next();
+                            inventarioHandler.removerLocalizacao(codigolocalizacao);
+                            break;
+                        
                         case "log out":
                             operacoes=false; 
                             break; 
-                        
-               
-            default:
+            case "GESTOR_LOG":
+
                 break;
+
+            case "OPERADOR_ARM":
+                
+            
+                break;
+            case "OPERADOR_SEL":
+
+                break;
+            case"OPERADOR_REC":
+                
+                break;
+            
         }
             }
         }

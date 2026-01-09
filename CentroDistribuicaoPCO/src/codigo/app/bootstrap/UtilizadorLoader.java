@@ -26,7 +26,6 @@ public class UtilizadorLoader {
                     dto.nome,
                     dto.email,
                     dto.password,
-                    new ArrayList<>(dto.permissoes),
                     Cargo.valueOf(dto.cargo)
             );
         }

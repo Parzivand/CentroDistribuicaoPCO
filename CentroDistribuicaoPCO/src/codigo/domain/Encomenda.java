@@ -72,7 +72,7 @@ public class Encomenda {//
     }
     @Override 
     public int hashCode() {
-        // TODO Auto-generated method stub
+   
         return Objects.hashCode(referencia);
     }
 }

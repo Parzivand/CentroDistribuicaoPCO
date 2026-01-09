@@ -55,7 +55,7 @@ public class LojaHandler {
         scanner.close();
     }
     // remove as lojas da lista 
-    public void RemoverLoja(int codigo){
+    public void RemoverLoja(String codigo){
         if(!lojas.containsKey(codigo)){
             throw  new IllegalArgumentException("essa loja nao esta registada no sistema!");  
         }
