@@ -22,6 +22,14 @@ public class ProdutoHandler {
     // Mapa categoria -> último número usado
     private final Map<String, Integer> contadoresPorCategoria = new HashMap<>();
 
+    private InventarioHandler inventarioHandler;
+
+
+    public ProdutoHandler (InventarioHandler inventarioHandler){
+        this.inventarioHandler = inventarioHandler;
+
+    }
+
 
     /**
      * Normaliza e valida a categoria.
@@ -86,6 +94,26 @@ public class ProdutoHandler {
         Produto p = new Produto(nome, skuGerado, unidadeMedida, restricoes, validade, catNormalizada);
         produtos.put(p.getSKU(), p);
         return p;
+    }
+
+    
+
+    public void removerProduto(String sku) {
+
+        Produto p = produtos.get(sku);
+        if (p == null)
+            throw new IllegalArgumentException("Produto não existe");
+
+        if (!inventarioHandler.podeRemoverProduto(p))
+            throw new IllegalStateException(
+                "Produto não pode ser removido — possui stock ou reservas."
+            );
+
+        produtos.remove(sku);
+    }
+    
+    public void setInventarioHandler(InventarioHandler inv) {
+        this.inventarioHandler = inv;
     }
 
     /**

@@ -14,6 +14,11 @@ public class InventarioHandler {
 
     private final ArrayList<Localizacao> localizacoes = new ArrayList<>();
     private final List<Movimentacao> historico = new ArrayList<>();
+    private Encomendahandler encomendaHandler;
+
+    public InventarioHandler (Encomendahandler encomendahandler){
+        this.encomendaHandler = encomendahandler;
+    }
 
     /* =========================
        UC11 / UC15 – CONSULTAS
@@ -178,6 +183,28 @@ public class InventarioHandler {
         } else {
             throw new IllegalArgumentException("Localização não vazia");
         }
+    }  
+
+    public boolean temStockAtivo(Produto p) {
+        for (Localizacao l : localizacoes) {
+            if (l.getQuantidade(p) > 0) return true;
+            if (l.getQuantidadequarentena(p) > 0) return true;
+            if (l.getReservado(p) > 0) return true;
+        }
+        return false;
+    }
+    
+
+    public void setEncomendaHandler(Encomendahandler e) {
+        this.encomendaHandler = e;
+    }
+
+    public boolean podeRemoverProduto(Produto p) {
+
+        if (temStockAtivo(p)) return false;
+        if (encomendaHandler != null && encomendaHandler.temReservas(p)) return false;
+
+        return true;
     }
 
     /* =========================

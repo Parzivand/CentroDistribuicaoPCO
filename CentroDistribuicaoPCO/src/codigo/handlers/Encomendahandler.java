@@ -161,6 +161,12 @@ public class Encomendahandler {
     }
 
 
+    public boolean temReservas(Produto p) {
+        return reservasPorEncomenda.values().stream()
+                .flatMap(List::stream)
+                .anyMatch(r -> r.produto.equals(p));
+    }
+
 
 
 

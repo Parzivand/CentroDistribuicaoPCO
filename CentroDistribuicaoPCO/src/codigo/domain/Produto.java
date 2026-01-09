@@ -60,12 +60,6 @@ public class Produto{
         return Collections.unmodifiableList(restricoes);
     }
 
-    public void setRestricoes(List<TipoRestricoes> restricoes) {
-        this.restricoes.clear();
-        if (restricoes != null) {
-            this.restricoes.addAll(restricoes);
-        }
-    }
     // compara de acordo com o SkU para posteriormente ser usado na ordenacao alfabetica no Handler 
     public int compareTo(Produto o){
         return this.SKU.compareTo(o.SKU);
