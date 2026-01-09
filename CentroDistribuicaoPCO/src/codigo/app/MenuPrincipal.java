@@ -295,6 +295,7 @@ public class MenuPrincipal {
                             inventarioHandler.criarLocalizacao(TipoLocalizacao.valueOf(tipoloc),capacidadeMaximaloc,restricoes);  
                             break;
                         case"editar localizacao":
+                            inventarioHandler.getLocalizacoes();
                             System.out.print("codigo: ");
                             String codigoloc= scanner.next();
 
@@ -307,6 +308,8 @@ public class MenuPrincipal {
                              break;   
 
                         case"remover localizacao":
+                        inventarioHandler.getLocalizacoes();
+                            inventarioHandler.getLocalizacoes();
                             System.out.print("codigo: ");
                             String codigolocalizacao= scanner.next();
                             inventarioHandler.removerLocalizacao(codigolocalizacao);
@@ -315,8 +318,9 @@ public class MenuPrincipal {
                         case "log out":
                             operacoes=false; 
                             break; 
-            case "GESTOR_LOG":
 
+            case "GESTOR_LOG":
+                
                 break;
 
             case "OPERADOR_ARM":
@@ -326,8 +330,18 @@ public class MenuPrincipal {
             case "OPERADOR_SEL":
 
                 break;
+
             case"OPERADOR_REC":
+                System.out.print("");
+                String operacao1= scanner.nextLine();
+                switch (operacao1) {
+                    case "registar rececao":
+                        fornecedorHandler.;
+                        break;
                 
+                    default:
+                        break;
+                }
                 break;
             
         }
