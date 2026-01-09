@@ -11,7 +11,7 @@ import codigo.domain.Localizacao;
 import codigo.domain.Rececao;
 import codigo.domain.Produto;
 import codigo.domain.StockItem;
-import codigo.domain.enums.Estadoencomenda;
+import codigo.domain.enums.EstadoEncomenda;
 import codigo.domain.enums.TipoRestricoes;
 import codigo.domain.enums.estadoStock;
 public class  RececaoHandler{

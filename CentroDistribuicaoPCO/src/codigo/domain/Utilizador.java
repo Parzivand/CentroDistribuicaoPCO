@@ -12,18 +12,14 @@ public class Utilizador{
     private String nome;
     private String email;
     private String password;
-    private List<String>  permissoes;// lista de funcoes que o utilizador pode fazer ex: ADMINISTRADOR(criar produto, criar  fornecedor,...)
     private Cargo cargo;// Ex: ADMINISTRADOR, OPERDADOR DE  SELECAO , GESTOR LOGISTICO , ETC...  
-    /*  faz sentido ser  uma lista de permissoes porque  podes ter varias
-                                       permissoes nao sei se quiseres mudar tas a vontade se te fizer mais
-                                        sentido*/ 
+
 
     // Construtor
-    public Utilizador(String nome, String email, String password, List<String> permissoes,Cargo cargo) {
+    public Utilizador(String nome, String email, String password,Cargo cargo) {
         this.nome = nome;
         this.email = email;
         this.password = password;
-        this.permissoes = permissoes;
         this.cargo = cargo; 
     }
 
@@ -41,15 +37,8 @@ public class Utilizador{
     public Cargo getcargo() { return cargo; }
     public void setPassword(Cargo cargo) { this.cargo = cargo; }
     
-    public List<String> getPermissoes() { return new ArrayList<>(permissoes);}
+
     
-    public void AdicionarPermissao(String permissao ){
-        if (permissoes.contains(permissao.toLowerCase())){
-            IO.println("Essa jase encontra nesse utilizador!");
-        }else{
-            permissoes.add(permissao.toLowerCase());
-        }
-    }
     
 
 }

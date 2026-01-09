@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import codigo.domain.enums.Estadoencomenda;
+import codigo.domain.enums.EstadoEncomenda;
 
-public class Encomenda {
+public class Encomenda {//
     
-    private String referencia;
+    private String referencia;    
     private Loja loja;
     private int prioridade;      // 1 (baixa) a 5 (alta)
-    private Estadoencomenda estado;       // POR_PREPARAR, PREPARADA, POR_EXPEDIR, EXPEDIDA
+    private EstadoEncomenda estado;       // POR_PREPARAR, PREPARADA, POR_EXPEDIR, EXPEDIDA
     private final List<LinhaEncomenda> linhas = new ArrayList<>();
 
     public Encomenda(String referencia, Loja loja, int prioridade) {
@@ -22,7 +22,7 @@ public class Encomenda {
         this.referencia = referencia;
         this.loja = loja;
         this.prioridade = prioridade;
-        this.estado = Estadoencomenda.POR_PREPARAR;
+        this.estado = EstadoEncomenda.POR_PREPARAR;
     }
 
     // Adicionar linha à encomenda
@@ -34,11 +34,11 @@ public class Encomenda {
     public String getReferencia() { return referencia; }
     public Loja getLoja() { return loja; }
     public int getPrioridade() { return prioridade; }
-    public Estadoencomenda getEstado() { return estado; }
+    public EstadoEncomenda getEstado() { return estado; }
     public List<LinhaEncomenda> getLinhas() { return new ArrayList<>(linhas); }
 
     // Setters
-    public void setEstado(Estadoencomenda estado) { this.estado = estado; }
+    public void setEstado(EstadoEncomenda estado) { this.estado = estado; }
     
     // Métodos úteis para prioridade
     public boolean isAltaPrioridade() {

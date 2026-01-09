@@ -151,6 +151,44 @@ public class Localizacao {
         }
     }
 
+    // UC10: Consumir reserva (preparar expedição)
+    public void consumirReserva(Produto produto, int quantidade) {
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade inválida");
+        }
+
+        int reservado = getReservado(produto);
+        if (reservado < quantidade) {
+            throw new IllegalArgumentException("Reserva insuficiente para consumo");
+        }
+
+        int stockAtual = getQuantidade(produto);
+        if (stockAtual < quantidade) {
+            // Isto NUNCA devia acontecer se a reserva estiver correta
+            throw new IllegalStateException("Stock físico inconsistente");
+        }
+
+        // 1. Remove do stock físico
+        int novoStock = stockAtual - quantidade;
+        if (novoStock == 0) {
+            stock.remove(produto);
+        } else {
+            stock.put(produto, novoStock);
+        }
+
+        // 2. Remove da reserva
+        int novoReservado = reservado - quantidade;
+        if (novoReservado == 0) {
+            stockReservado.remove(produto);
+        } else {
+            stockReservado.put(produto, novoReservado);
+        }
+    }
+
+
+    public boolean temReservaSuficiente(Produto produto, int quantidade) {
+        return getReservado(produto) >= quantidade;
+    }
 
 
     // Getters/Setters básicos

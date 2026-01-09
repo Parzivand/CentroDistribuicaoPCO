@@ -1,10 +1,8 @@
 package codigo.handlers;
 
-import codigo.domain.Encomenda;
-import codigo.domain.Localizacao;
-import codigo.domain.Loja;
-import codigo.domain.Produto;
-import codigo.domain.enums.Estadoencomenda;
+import codigo.domain.*;
+import codigo.domain.enums.EstadoEncomenda;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -41,13 +39,15 @@ public class Encomendahandler {
 
         String data = LocalDate.now().toString().replace("-", "");
         String referencia;
-        Random random = new Random();
+        Random r = new Random();
 
         do {
-            referencia = String.format("ENC-%s-%04d", data, random.nextInt(10000));
+            referencia = String.format("ENC-%s-%04d", data, r.nextInt(10000));
         } while (encomendas.containsKey(referencia));
 
         Encomenda e = new Encomenda(referencia, loja, prioridade);
+        e.setEstado(EstadoEncomenda.CRIADA);
+
         encomendas.put(referencia, e);
         reservasPorEncomenda.put(referencia, new ArrayList<>());
 
@@ -55,25 +55,30 @@ public class Encomendahandler {
     }
 
     // UC09: adiciona linha + tenta reservar FIFO (sem consumir stock)
-    public void adicionarLinhaEncomenda(String referencia, Produto produto, int quantidade) {
-        if (referencia == null || produto == null) throw new IllegalArgumentException("Dados em falta");
-        if (quantidade <= 0) throw new IllegalArgumentException("Quantidade tem de ser > 0");
+         public void adicionarLinhaEncomenda(String referencia, Produto produto, int quantidade) {
+        if (produto == null || quantidade <= 0)
+            throw new IllegalArgumentException("Dados inválidos");
 
         Encomenda enc = encomendas.get(referencia);
-        if (enc == null) throw new IllegalArgumentException("Referência inválida");
+        if (enc == null)
+            throw new IllegalArgumentException("Encomenda inexistente");
 
-        // Registo da linha na encomenda (como já tinhas)
+        if (enc.getEstado() != EstadoEncomenda.CRIADA &&
+            enc.getEstado() != EstadoEncomenda.PENDENTE &&
+            enc.getEstado() != EstadoEncomenda.PARCIAL)
+            throw new IllegalStateException("Não é possível alterar esta encomenda");
+
+        // Linha guarda o PRODUTO (não o nome)
         enc.adicionarLinha(produto.getNome(), quantidade);
 
         int reservado = reservarFIFO(referencia, produto, quantidade);
 
-        // Estado conforme reserva
         if (reservado == 0) {
-            enc.setEstado(Estadoencomenda.PEDENTE); // ou PENDENTE
+            enc.setEstado(EstadoEncomenda.PENDENTE);
         } else if (reservado < quantidade) {
-            enc.setEstado(Estadoencomenda.PEDENTE); // ou cria Estadoencomenda.PARCIAL se quiseres
+            enc.setEstado(EstadoEncomenda.PARCIAL);
         } else {
-            enc.setEstado(Estadoencomenda.RESERVADA);
+            enc.setEstado(EstadoEncomenda.RESERVADA);
         }
     }
 
@@ -85,18 +90,14 @@ public class Encomendahandler {
         for (Localizacao loc : inventario.getLocalizacoesFIFO()) {
             if (falta == 0) break;
 
-            // Ignora localizações incompatíveis
             if (!loc.verificarCompatibilidade(produto)) continue;
 
-            int disponivel = loc.getQuantidadeDisponivel(produto); // disponível real = stock - reservado
+            int disponivel = loc.getQuantidadeDisponivel(produto);
             if (disponivel <= 0) continue;
 
             int aReservar = Math.min(disponivel, falta);
 
-            // Reserva sem consumir
             loc.reservarStock(produto, aReservar);
-
-            // Guarda a alocação por localização (para cancelar depois)
             reservas.add(new Reserva(loc.getCodigo(), produto, aReservar));
 
             falta -= aReservar;
@@ -107,10 +108,22 @@ public class Encomendahandler {
 
     // Cancelar encomenda e libertar reservas que foram feitas (sem mexer no stock físico)
     public void cancelarEncomenda(String referencia) {
-        Encomenda enc = encomendas.remove(referencia);
-        List<Reserva> reservas = reservasPorEncomenda.remove(referencia);
+        Encomenda enc = encomendas.get(referencia);
+        if (enc == null)
+            throw new IllegalArgumentException("Encomenda inexistente");
 
-        if (enc == null) throw new IllegalArgumentException("Encomenda não encontrada");
+        if (enc.getEstado() == EstadoEncomenda.POR_PREPARAR ||
+            enc.getEstado() == EstadoEncomenda.EXPEDIDA)
+            throw new IllegalStateException("Encomenda já em processamento");
+
+        libertarReservas(referencia);
+
+        enc.setEstado(EstadoEncomenda.CANCELADA);
+        encomendas.remove(referencia);
+    }
+
+    private void libertarReservas(String referencia) {
+        List<Reserva> reservas = reservasPorEncomenda.remove(referencia);
         if (reservas == null) return;
 
         for (Reserva r : reservas) {
@@ -119,47 +132,67 @@ public class Encomendahandler {
                 loc.libertarReserva(r.produto, r.quantidade);
             }
         }
-
     }
 
+
+    /* =================================
+       UC10 – Consumir reservas (expedição)
+       ================================= */
+    public void consumirReservas(String referencia) {
+        Encomenda enc = encomendas.get(referencia);
+        if (enc == null)
+            throw new IllegalArgumentException("Encomenda inexistente");
+
+        if (enc.getEstado() != EstadoEncomenda.RESERVADA &&
+            enc.getEstado() != EstadoEncomenda.PARCIAL)
+            throw new IllegalStateException("Encomenda não está pronta");
+
+        List<Reserva> reservas = reservasPorEncomenda.remove(referencia);
+        if (reservas == null) return;
+
+        for (Reserva r : reservas) {
+            Localizacao loc = inventario.getLocalizacaoPorCodigo(r.codigoLocalizacao);
+            if (loc != null) {
+                loc.consumirReserva(r.produto, r.quantidade);
+            }
+        }
+
+        enc.setEstado(EstadoEncomenda.POR_PREPARAR);
+    }
+
+
+
+
+
+
+    /* =======================
+       Consultas auxiliares
+       ======================= */
     public Encomenda getEncomenda(String referencia) {
         return encomendas.get(referencia);
     }
 
-    public Map<String, Encomenda> verEncomendas() {
-        return new HashMap<>(encomendas);
+    public Collection<Encomenda> listarEncomendas() {
+        return Collections.unmodifiableCollection(encomendas.values());
     }
 
-    
-
-    // Resumo simples (não depende de saber como é LinhaEncomenda internamente)
     public String resumoEncomenda(String referencia) {
         Encomenda enc = encomendas.get(referencia);
         if (enc == null) return "Encomenda não encontrada";
 
-        int reservadoTotal = reservasPorEncomenda.getOrDefault(referencia, List.of())
+        int reservado = reservasPorEncomenda
+                .getOrDefault(referencia, List.of())
                 .stream().mapToInt(r -> r.quantidade).sum();
 
-        return String.format("Ref: %s | Estado: %s | Reservado (total): %d",
-                referencia, enc.getEstado(), reservadoTotal);
+        return String.format(
+                "Ref: %s | Estado: %s | Total reservado: %d",
+                enc.getReferencia(),
+                enc.getEstado(),
+                reservado
+        );
     }
 
-    public int totalReservadoPorProduto(Produto p) {
-        int total = 0;
-        
-        // Percorre TODAS as encomendas
-        for (List<Reserva> reservas : reservasPorEncomenda.values()) {
-            
-            // Percorre TODAS as reservas dessa encomenda
-            for (Reserva r : reservas) {
-                
-                // Se é o mesmo produto, soma
-                if (r.produto.equals(p)) {
-                    total += r.quantidade;
-                }
-            }
-        }
-        
-        return total;
+    public List<?> getReservasDaEncomenda(String referencia) {
+        return reservasPorEncomenda.getOrDefault(referencia, List.of());
     }
 }

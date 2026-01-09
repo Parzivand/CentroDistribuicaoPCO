@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import codigo.domain.enums.EstadoExpedicao;
-import codigo.domain.enums.Estadoencomenda;
+import codigo.domain.enums.EstadoEncomenda;
 
 public class Expedicao {
 
@@ -26,11 +26,11 @@ public class Expedicao {
         if(encomenda == null) {
             throw new IllegalArgumentException("Encomenda não pode ser null");
         }
-        if(!Estadoencomenda.POR_PREPARAR.equals(encomenda.getEstado())) {
+        if(!EstadoEncomenda.POR_PREPARAR.equals(encomenda.getEstado())) {
             throw new IllegalStateException("Só é possível associar encomendas quando o estado é POR_PREPARAR");
         }
         encomendas.add(encomenda);
-        encomenda.setEstado(Estadoencomenda.RESERVADA);
+        encomenda.setEstado(EstadoEncomenda.RESERVADA);
         gerarTarefasSelecao(encomenda);
     }
 
