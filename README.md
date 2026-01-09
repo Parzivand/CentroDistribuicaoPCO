@@ -42,7 +42,7 @@ Pessoa A (Fluxo Principal - 3h):
 - EncomendaHandler (UC09 reserva FIFO) [file:2]
 
 (
-No EncomendaHandler (UC09), garantir logo: acho que ta feito  
+No EncomendaHandler (UC09), garantir logo: quase feito (falta a reserva fifo)
 
 - Reserva ≠ consumo de stock
 

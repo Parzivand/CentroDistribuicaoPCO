@@ -12,7 +12,7 @@ public class AjusteStock {
     private int quantidade;
     //Construtor
 
-    public AjusteStock( Produto produto, String id,Localizacao localizacao, int quantidade) {
+    public AjusteStock( String produto_codigo, String id,Localizacao localizacao, int quantidade) {
         this.estado = "pendente";
         this.produto_codigo = produto_codigo;
         this.id = id;

@@ -39,7 +39,7 @@ public  class Encomendahandler {
                 throw new IllegalArgumentException("referencia invalida, ponha uma referencia valida");
             }
             encomendas.get(referencia).adicionarLinha(produto.getNome(), quantidade);
-
+            
             int espacodisponivel= (localizacao.getCapacidadeMaxima() - localizacao.getQuantidade(produto));
             
             if(espacodisponivel == localizacao.getCapacidadeMaxima()){

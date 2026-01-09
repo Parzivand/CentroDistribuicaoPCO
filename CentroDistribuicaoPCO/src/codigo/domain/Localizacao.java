@@ -95,7 +95,7 @@ public class Localizacao {
     /**
      * Verifica se esta localização suporta todas as restrições do produto.
      */
-    private boolean verificarCompatibilidade(Produto produto) { 
+    public boolean verificarCompatibilidade(Produto produto) { 
         List<TipoRestricoes> restricoesProduto = produto.getRestricoes();
      
         for (TipoRestricoes restricao : restricoesProduto) {
