@@ -1,5 +1,4 @@
 package codigo.app;
-
 import codigo.app.bootstrap.MasterDataLoader;
 import codigo.handlers.*;
 import codigo.repositories.*;
@@ -8,7 +7,7 @@ import codigo.resources.JsonService;
 public class Main {
 
     public static void main(String[] args) {
-
+        
         try {
 
             // REPOSITÓRIOS
@@ -41,7 +40,8 @@ public class Main {
 
             // Aqui começa a tua UI / Menu principal
             new MenuPrincipal(produtoHandler, lojaHandler, utilizadorHandler).run();
-
+            
+            
         } catch (Exception e) {
             System.err.println("Erro ao iniciar sistema: " + e.getMessage());
             e.printStackTrace();

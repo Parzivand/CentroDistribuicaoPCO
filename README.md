@@ -81,7 +81,7 @@ DIA 3
 Pessoa A (Autenticação - 2h):
 - Refatore Autenticacao + menus roles básicos (UC01/02) [file:6]
 Pessoa B (CRUD Final - 2h):
-- Gerir localizações (UC23)
+- Gerir localizações (UC23) -> Feito  
 Merge: Menus funcionais por role
 
 

@@ -1,12 +1,6 @@
 package codigo.domain;
 
-
-import java.sql.Date;
-import java.sql.Time;
-import java.text.ListFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,24 +20,24 @@ public class Localizacao {
     // Inventário desta localização: Produto -> quantidade
     private final Map<Produto,Integer> stock = new HashMap<>();
     private Map<Produto,Integer> quarentena= new HashMap<>();
+    private Map<Produto, Integer> stockReservado = new HashMap<>();
     
 
     // Construtor
-    public Localizacao( String codigo,TipoLocalizacao tipo, int capacidadeMaxima,
-        ArrayList<TipoRestricoes> restricoesSuportadas) {
-        
-        this.codigo=codigo;
+    public Localizacao(String codigo, TipoLocalizacao tipo, int capacidadeMaxima, ArrayList<TipoRestricoes> restricoesSuportadas) {
+        this.codigo = codigo;
         this.tipo = tipo;
         this.capacidadeMaxima = capacidadeMaxima;
-        this.restricoesSuportadas = restricoesSuportadas;
+        this.restricoesSuportadas = restricoesSuportadas != null ? restricoesSuportadas : new ArrayList<>();
+        this.stockReservado = new HashMap<>(); 
     }
 
     // Métodos de inventário
-    public int getQuantidade(Produto produto){
+    public int getQuantidade(Produto produto) {
         return stock.getOrDefault(produto, 0);
     }
-    public int getQuantidadequarentena (Produto produto){
-        return quarentena.getOrDefault(produto, 0);
+    public int getQuantidadeTotal(Produto produto) {
+        return getQuantidade(produto) + getQuantidadequarentena(produto);
     }
     
     public void adicionar(Produto produto, int quantidade) {
@@ -58,15 +52,24 @@ public class Localizacao {
         stock.put(produto, atual + quantidade);
     }
     public void adicionarquarentena(Produto produto, int quantidade) {
-           
-        if (quantidade <= 0) {
-            throw new IllegalArgumentException("Quantidade deve ser > 0");
-        }
-              
-        verificarCompatibilidade(produto);
+        if (quantidade <= 0) throw new IllegalArgumentException("Quantidade deve ser > 0");
 
-        int atual = getQuantidade(produto);
-        quarentena.put(produto,atual + quantidade);
+        if (!verificarCompatibilidade(produto)) {
+            throw new IllegalArgumentException("Localização não suporta restrições do produto");
+        }
+
+        int atual = getQuantidadequarentena(produto); // <-- era getQuantidade(produto)
+        quarentena.put(produto, atual + quantidade);
+    }
+
+    public void removerQuarentena(Produto produto, int quantidade) {
+        if (quantidade <= 0) throw new IllegalArgumentException("Quantidade deve ser > 0");
+        int atual = getQuantidadequarentena(produto);
+        if (quantidade > atual) throw new IllegalArgumentException("Quantidade a remover maior que a existente");
+
+        int novo = atual - quantidade;
+        if (novo == 0) quarentena.remove(produto);
+        else quarentena.put(produto, novo);
     }
 
     public void remover(Produto produto, int quantidade) {
@@ -114,6 +117,41 @@ public class Localizacao {
         }
 
     
+    // UC09: Reservar stock (sem consumir disponível)
+    public void reservarStock(Produto produto, int quantidade) {
+        if (quantidade <= 0) throw new IllegalArgumentException("Quantidade inválida");
+        
+        int disponivel = getQuantidade(produto) - getReservado(produto);
+        if (disponivel < quantidade) {
+            throw new IllegalArgumentException("Stock disponível insuficiente: " + disponivel);
+        }
+        
+        stockReservado.put(produto, getReservado(produto) + quantidade);
+    }
+
+    // UC09: Stock disponível real (disponível - reservado)
+    public int getQuantidadeDisponivel(Produto produto) {
+        return getQuantidade(produto) - getReservado(produto);
+    }
+
+    // UC09: Quanto está reservado
+    public int getReservado(Produto produto) {
+        return stockReservado.getOrDefault(produto, 0);
+    }
+
+    // UC09: Libertar reserva (cancelar encomenda)
+    public void libertarReserva(Produto produto, int quantidade) {
+        int reservado = getReservado(produto);
+        if (reservado < quantidade) {
+            throw new IllegalArgumentException("Reserva insuficiente");
+        }
+        stockReservado.put(produto, reservado - quantidade);
+        if (stockReservado.get(produto) == 0) {
+            stockReservado.remove(produto);
+        }
+    }
+
+
 
     // Getters/Setters básicos
 
@@ -130,6 +168,14 @@ public class Localizacao {
     // altera as restricoes que suporta
     public void addRestricoesSuportadas(TipoRestricoes restricoesSuportadas) { this.restricoesSuportadas.add(restricoesSuportadas); }
     public void removeRestricoesSuportadas(TipoRestricoes restricoesSuportadas) { this.restricoesSuportadas.remove(restricoesSuportadas); }
+
+    public Map<Produto, Integer> getStockReservado() {
+        return Collections.unmodifiableMap(stockReservado);
+    }
+    public int getQuantidadequarentena (Produto produto){
+        return quarentena.getOrDefault(produto, 0);
+    }
+
 
     @Override
     public String toString() {
