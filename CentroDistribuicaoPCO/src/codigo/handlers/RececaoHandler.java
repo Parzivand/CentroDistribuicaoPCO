@@ -1,19 +1,12 @@
 package codigo.handlers;
 
+import codigo.domain.Fornecedor;
+import codigo.domain.Localizacao;
+import codigo.domain.Produto;
+import codigo.domain.Rececao;
+import codigo.domain.enums.TipoRestricoes;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import codigo.domain.Fornecedor;
-import codigo.domain.LinhaRececao;
-import codigo.domain.Localizacao;
-import codigo.domain.Rececao;
-import codigo.domain.Produto;
-import codigo.domain.StockItem;
-import codigo.domain.enums.EstadoEncomenda;
-import codigo.domain.enums.TipoRestricoes;
-import codigo.domain.enums.estadoStock;
 public class  RececaoHandler{
     private ArrayList<Rececao> rececoes;
 
@@ -134,6 +127,12 @@ public class  RececaoHandler{
             ,rececoes.getLast().getIdRececao(),rececoes.getLast().getLinhas().size(),rececoes.getLast().listarProdutosquarentena());
         }
         // mudar para ser no stock da localizacao 
+
+        public boolean produtoTemRececoes(Produto p) {
+            return rececoes.stream()
+                    .flatMap(r -> r.getLinhas().stream())
+                    .anyMatch(l -> l.getProduto().equals(p));
+        }
 
     
     }

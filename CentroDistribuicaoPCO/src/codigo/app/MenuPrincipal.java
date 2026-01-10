@@ -1,24 +1,13 @@
 package codigo.app;
 
-import codigo.handlers.UtilizadorHandler;
-import codigo.handlers.ProdutoHandler;
-import codigo.handlers.RececaoHandler;
-
 import java.lang.classfile.instruction.SwitchCase;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.util.*;
 
 import codigo.domain.Localizacao;
 import codigo.domain.Utilizador;
-import codigo.domain.enums.Cargo;
-import codigo.domain.enums.TipoLocalizacao;
-import codigo.domain.enums.TipoRestricoes;
-import codigo.handlers.FornecedorHandler;
-import codigo.handlers.InventarioHandler;
-import codigo.handlers.LojaHandler;
-import codigo.handlers.Encomendahandler;
-import codigo.handlers.ExpedicaoHandler;
+import codigo.domain.enums.*;
+import codigo.handlers.*;
 
 public class MenuPrincipal {
     // Atributos
@@ -320,7 +309,7 @@ public class MenuPrincipal {
                             break; 
 
             case "GESTOR_LOG":
-                
+                    InventarioHandler    
                 break;
 
             case "OPERADOR_ARM":
@@ -328,7 +317,7 @@ public class MenuPrincipal {
             
                 break;
             case "OPERADOR_SEL":
-
+                
                 break;
 
             case"OPERADOR_REC":
@@ -336,9 +325,69 @@ public class MenuPrincipal {
                 String operacao1= scanner.nextLine();
                 switch (operacao1) {
                     case "registar rececao":
-                        fornecedorHandler.;
+                        fornecedorHandler.getfornecedores();
+                        System.out.print("seleciona um fornecedor: ");
+                        String selecao= scanner.next();
+                        rececaoHandler.criar_Rececao(fornecedorHandler.getfornecedores().get(selecao));
+                        while (true){
+                            System.out.print("lote");
+                            String lote= scanner.next();
+
+                            System.out.print("quantidade: ");
+                            int quantidaderecebida= scanner.nextInt();
+                            
+                            produtoHandler.getprodutos();
+                            System.out.print("codigo do produto: ");
+                            String codigoproduto= scanner.next();
+                           fornecedorHandler.associarProdutos(produtoHandler.getprodutos().get(codigoproduto),
+                           fornecedorHandler.getfornecedores().get(selecao).getEmail()); 
+
+                            inventarioHandler.getLocalizacoes();
+                            System.out.print("selecione a localizacao pelo codigo: ");
+                            String codigo= scanner.next();
+                            rececaoHandler.adicionar_linhas_naoconformidades(produtoHandler.getprodutos().get(codigoproduto)
+                            , quantidaderecebida, lote, inventarioHandler.getLocalizacaoPorCodigo(codigo));
+                            
+                            System.out.print("tem mais linhas?");
+                            String resposta= scanner.next();
+                            if(resposta.equalsIgnoreCase("nao")){
+                                break;
+                            }
+                        }
+                        rececaoHandler.ResumoRegisto();
                         break;
-                
+                    case "consultar rececoes":
+                        rececaoHandler.getrececoes();
+                        System.out.print("filtrar por periodo/fornecedor?");
+                        String escolha = scanner.next();
+                        switch (escolha) {
+                            case "periodo":
+                                System.out.print("primeira data: ");
+                                System.out.print("\n ano: ");
+                                int ano=scanner.nextInt();
+                                System.out.print("\n mes: ");
+                                int mes=scanner.nextInt();
+                               System.out.print("\n dia: ");
+                                int dia=scanner.nextInt();
+                                System.out.print("segunda data: ");
+                                System.out.print("\n ano: ");
+                                int ano2=scanner.nextInt();
+                                System.out.print("\n mes: ");
+                                int mes2=scanner.nextInt();
+                               System.out.print("\n dia: ");
+                                int dia2=scanner.nextInt();
+                                  
+                                rececaoHandler.Filtrarperiodo(LocalDate.of(ano,mes,dia)
+                                ,LocalDate.of(ano2, mes2, dia2));
+                                break;
+                            case"fornecedor":
+                            fornecedorHandler.getfornecedores();
+                            System.out.print("\n selecione  o fornecedor: ");
+                            String fornecedor= scanner.next();
+                            rececaoHandler.Filtrarfornecedores(fornecedorHandler.getfornecedores().get(fornecedor));
+                            default:
+                                break;
+                        }
                     default:
                         break;
                 }

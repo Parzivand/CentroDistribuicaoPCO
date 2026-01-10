@@ -149,7 +149,9 @@ public class FornecedorHandler{
         }
         return fornecedores.get(email.trim().toUpperCase()).toString();
     }
-
+  public HashMap<String,Fornecedor> getfornecedores(){
+    return new HashMap<>(fornecedores);
+  }
   public ArrayList<Fornecedor>  getfornecedores(int valor) { 
    // criei uma lista com todos os valores do Map para que se possa  mostrar todos os valores de 10 em 10 caso
    // seja solicitado que sera  configurado  no  menu 

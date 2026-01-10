@@ -2,7 +2,6 @@ package codigo.handlers;
 
 import codigo.domain.*;
 import codigo.domain.enums.EstadoEncomenda;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +32,19 @@ public class ExpedicaoHandler {
             throw new IllegalArgumentException("Encomenda não encontrada");
 
         if (!EstadoEncomenda.POR_PREPARAR.equals(encomenda.getEstado()))
-            throw new IllegalStateException("Encomenda não está em POR_PREPARAR");
+            throw new IllegalStateException("Encomenda não está pronta");
 
+        //  CONSUME AS RESERVAS (abate stock real)
+        encomendaHandler.consumirReservas(referenciaEncomenda);
+
+        //  Cria expedição
         Expedicao expedicao = new Expedicao(referenciaEncomenda, localizacaoInicial);
 
-        expedicao.associarEncomenda(encomenda);   // cria tarefas + passa encomenda a RESERVADA
+        //  Cria tarefas (picking)
+        expedicao.associarEncomenda(encomenda);
+
+        //  Encomenda passa a EXPEDIDA
+        encomenda.setEstado(EstadoEncomenda.EXPEDIDA);
 
         expedicoes.add(expedicao);
         return expedicao;

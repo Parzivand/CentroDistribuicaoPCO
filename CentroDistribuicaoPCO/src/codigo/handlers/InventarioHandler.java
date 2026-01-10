@@ -6,7 +6,6 @@ import codigo.domain.Produto;
 import codigo.domain.enums.TipoLocalizacao;
 import codigo.domain.enums.TipoRestricoes;
 import codigo.domain.enums.estadoStock;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -15,9 +14,11 @@ public class InventarioHandler {
     private final ArrayList<Localizacao> localizacoes = new ArrayList<>();
     private final List<Movimentacao> historico = new ArrayList<>();
     private Encomendahandler encomendaHandler;
+    private RececaoHandler rececaoHandler;
 
-    public InventarioHandler (Encomendahandler encomendahandler){
+    public InventarioHandler (Encomendahandler encomendahandler, RececaoHandler rececaoHandler){
         this.encomendaHandler = encomendahandler;
+        this.rececaoHandler = rececaoHandler;
     }
 
     /* =========================
@@ -199,10 +200,17 @@ public class InventarioHandler {
         this.encomendaHandler = e;
     }
 
+
+
+    public void setRececaoHandler(RececaoHandler r) {
+        this.rececaoHandler = r;
+    }
+
     public boolean podeRemoverProduto(Produto p) {
 
         if (temStockAtivo(p)) return false;
         if (encomendaHandler != null && encomendaHandler.temReservas(p)) return false;
+        if (rececaoHandler != null && rececaoHandler.produtoTemRececoes(p)) return false;
 
         return true;
     }

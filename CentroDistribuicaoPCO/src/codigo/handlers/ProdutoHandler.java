@@ -2,17 +2,13 @@ package codigo.handlers;
 
 import codigo.domain.Produto;
 import codigo.domain.enums.TipoRestricoes;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.TreeMap;
-import java.lang.reflect.Array;
-import java.time.LocalDate;
-import javax.management.InvalidAttributeValueException;
+
 
 public class ProdutoHandler {
 
@@ -150,7 +146,7 @@ public class ProdutoHandler {
    ArrayList<Produto> mostrar_produtos = new ArrayList<>();
    mostrar_produtos.addAll(produtos.values());
    if(valor>mostrar_produtos.size()-1){
-    IO.println(mostrar_produtos);
+    System.out.println(mostrar_produtos);
     throw new IndexOutOfBoundsException("demasiado  grande o valor\n");
    }
         return new ArrayList(mostrar_produtos.subList(0, valor)); 
