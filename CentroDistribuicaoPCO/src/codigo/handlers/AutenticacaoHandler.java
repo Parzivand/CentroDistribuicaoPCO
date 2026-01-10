@@ -1,27 +1,33 @@
 package codigo.handlers;
 
-import java.util.HashMap;
-
 import codigo.domain.Utilizador;
-public class AutenticacaoHandler{
-// Atributos
-    UtilizadorHandler utilizadores;
-    
-    public void Autenticar(String nome, String password){
-      if(nome==null|| password==null){
-         throw new IllegalArgumentException("informacoes vazias");
-      }
-      for(Utilizador utilizador: utilizadores.listarUtilizadores()){
-         if(utilizador.getNome().equals(nome)&& utilizador.getPassword().equals(password)){
-            // usar o menu  como utilizador
-            break;  
-         }  
-         
-      }
+
+public class AutenticacaoHandler {
+
+    private UtilizadorHandler utilizadores;
+
+    public AutenticacaoHandler(UtilizadorHandler utilizadores) {
+        this.utilizadores = utilizadores;
     }
 
-    public void registar_utilizador(Utilizador utilizador){
-     // utilizadores.dadosUtilizador(utilizador.getNome(),utilizador.getEmail(), utilizador.getPassword(),utilizador.getPermissoes(),
-      //utilizador.getcargo());
+    public Utilizador autenticar(String email, String password) {
+        if (email == null || password == null) {
+            throw new IllegalArgumentException("Informações vazias");
+        }
+
+        email = email.trim();
+        password = password.trim();
+
+         System.out.println("DEBUG: total utilizadores = " + utilizadores.listarUtilizadores().size());
+         
+        for (Utilizador utilizador : utilizadores.listarUtilizadores()) {
+            if (utilizador.getEmail().equalsIgnoreCase(email)
+                    && utilizador.getPassword().equals(password)) {
+
+                return utilizador; // LOGIN OK
+            }
+        }
+
+        return null; // LOGIN FALHOU
     }
 }

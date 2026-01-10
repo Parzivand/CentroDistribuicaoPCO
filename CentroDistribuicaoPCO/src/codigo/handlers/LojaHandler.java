@@ -1,15 +1,21 @@
 package codigo.handlers;
 import codigo.domain.Loja;
+import codigo.repositories.LojaRepository;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.random.*;
+
 public class LojaHandler {
     private HashMap<String,Loja> lojas; // lista de lojas 
     // adicionar  e remover lojas  parte do UC22 pq o editar acho que se pode fazer no main 
     // verifica se a  loja ja existe como o codigo  e  gera um valor aleatorio entre 000000 e 999999 para que 
     // seja muito dificil de haver uma loja com um codigo igual
+
+     private LojaRepository repo;
+
+    public LojaHandler(LojaRepository repo) {
+        this.repo = repo;
+    }
     
     public void adicionarLoja(String nome,String area_atuacao,String morada){
         Random random = new Random();

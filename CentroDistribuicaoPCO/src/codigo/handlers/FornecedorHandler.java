@@ -1,6 +1,8 @@
 package codigo.handlers;
 
-import java.io.IOException;
+import codigo.domain.Fornecedor;
+import codigo.domain.Produto;
+import codigo.repositories.FornecedorRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,12 +11,17 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 
-import codigo.domain.Fornecedor;
-import codigo.domain.Produto;
-
 public class FornecedorHandler{ 
     Map<String,Fornecedor> fornecedores = new TreeMap<>();
     Map<Fornecedor,ArrayList<Produto>> produtosdosfornecedores; //   fornecedores  com a sua lista de produtos 
+    
+     private FornecedorRepository repo;
+
+    public FornecedorHandler(FornecedorRepository repo) {
+        this.repo = repo;
+    }
+    
+    
     // UC03
     public void adicionarFornecedor(String nome,
         String email,String telefone){
@@ -80,7 +87,7 @@ public class FornecedorHandler{
                 produtosdosfornecedores.remove(fornecedor);
                 break;
             }else{
-                IO.print("nao da para tirar esse fornecedor");
+                System.out.print("nao da para tirar esse fornecedor");
             }
         }
         // 
@@ -91,7 +98,7 @@ public class FornecedorHandler{
     ||atributo.trim().toLowerCase().equals("email"))){
         throw new IllegalArgumentException("ou o nome nao foi preenchido ou o");
         }
-        IO.println(fornecedores.get(email).toString());
+        System.out.println(fornecedores.get(email).toString());
             Scanner scanner= new Scanner(System.in); 
             switch (atributo.trim().toLowerCase()) {
                 case "nome":
@@ -159,7 +166,7 @@ public class FornecedorHandler{
    ArrayList<Fornecedor> mostrar_fornecedores = new ArrayList<>();
    mostrar_fornecedores.addAll(fornecedores.values());
    if(valor>mostrar_fornecedores.size()-1){
-    IO.println(mostrar_fornecedores);
+    System.out.println(mostrar_fornecedores);
     throw new IndexOutOfBoundsException("demasiado  grande o valor\n");
    }
         return new ArrayList(mostrar_fornecedores.subList(0, valor)); 

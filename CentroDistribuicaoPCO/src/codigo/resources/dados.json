@@ -6,56 +6,56 @@
         "unidadeMedida": "kg",
         "categoria": "ALI",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Arroz Integral 1kg",
         "unidadeMedida": "kg",
         "categoria": "ALI",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Massa Esparguete 500g",
         "unidadeMedida": "g",
         "categoria": "ALI",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Massa Cotovelo 500g",
         "unidadeMedida": "g",
         "categoria": "ALI",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Atum em Óleo 120g",
         "unidadeMedida": "g",
         "categoria": "ALI",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Atum em Água 120g",
         "unidadeMedida": "g",
         "categoria": "ALI",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Bolacha Maria 400g",
         "unidadeMedida": "g",
         "categoria": "ALI",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Bolacha Chocolate 300g",
         "unidadeMedida": "g",
         "categoria": "ALI",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Açúcar Branco 1kg",
@@ -77,28 +77,28 @@
         "unidadeMedida": "litro",
         "categoria": "BEB",
         "validade": null,
-        "restricoes": [ "FRIO", "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "FRIO", "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Leite Magro 1L",
         "unidadeMedida": "litro",
         "categoria": "BEB",
         "validade": null,
-        "restricoes": [ "FRIO", "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "FRIO", "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Sumo Laranja 1L",
         "unidadeMedida": "litro",
         "categoria": "BEB",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Sumo Maçã 1L",
         "unidadeMedida": "litro",
         "categoria": "BEB",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Água Mineral 1.5L",
@@ -292,42 +292,42 @@
         "unidadeMedida": "unidade",
         "categoria": "MED",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA", "TOXICO" ]
+        "restricoes": [ "EXIGE_VALIDADE", "TOXICO" ]
     },
     {
         "nome": "Ibuprofeno 400mg 20 comprimidos",
         "unidadeMedida": "unidade",
         "categoria": "MED",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA", "TOXICO" ]
+        "restricoes": [ "EXIGE_VALIDADE", "TOXICO" ]
     },
     {
         "nome": "Vitamina C 1000mg 30 comprimidos",
         "unidadeMedida": "unidade",
         "categoria": "MED",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Xarope Tosse 150ml",
         "unidadeMedida": "ml",
         "categoria": "MED",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA", "TOXICO" ]
+        "restricoes": [ "EXIGE_VALIDADE", "TOXICO" ]
     },
     {
         "nome": "Pomada Anti-inflamatória 50g",
         "unidadeMedida": "g",
         "categoria": "MED",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA", "TOXICO" ]
+        "restricoes": [ "EXIGE_VALIDADE", "TOXICO" ]
     },
     {
         "nome": "Soro Fisiológico 250ml",
         "unidadeMedida": "ml",
         "categoria": "MED",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
 
     {
@@ -335,14 +335,14 @@
         "unidadeMedida": "kg",
         "categoria": "PET",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Ração Gato Adulto 5kg",
         "unidadeMedida": "kg",
         "categoria": "PET",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Areia Higiénica Gato 10L",
@@ -356,7 +356,7 @@
         "unidadeMedida": "unidade",
         "categoria": "PET",
         "validade": null,
-        "restricoes": [ "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "EXIGE_VALIDADE" ]
     },
 
     {
@@ -386,28 +386,28 @@
         "unidadeMedida": "unidade",
         "categoria": "BRQ",
         "validade": null,
-        "restricoes": [ "CONGELADO", "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "CONGELADO", "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Pizza Congelada Fiambre",
         "unidadeMedida": "unidade",
         "categoria": "BRQ",
         "validade": null,
-        "restricoes": [ "CONGELADO", "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "CONGELADO", "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Ervilhas Congeladas 1kg",
         "unidadeMedida": "kg",
         "categoria": "BRQ",
         "validade": null,
-        "restricoes": [ "CONGELADO", "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "CONGELADO", "EXIGE_VALIDADE" ]
     },
     {
         "nome": "Batatas Fritas Congeladas 1kg",
         "unidadeMedida": "kg",
         "categoria": "BRQ",
         "validade": null,
-        "restricoes": [ "CONGELADO", "VALIDADE_OBRIGATORIA" ]
+        "restricoes": [ "CONGELADO", "EXIGE_VALIDADE" ]
     }
     ],
 
@@ -431,42 +431,42 @@
       "email": "pedro.arm@distrib.pt",
       "password": "armazem789",
       "permissoes": ["gerir_stock", "ver_rececoes", "mover_produtos"],
-      "cargo": "OPERADOR_ARM"
+      "cargo": "OPERDADOR_ARM"
     },
     {
       "nome": "Ana Pereira",
       "email": "ana.sel@distrib.pt",
       "password": "selecao101",
       "permissoes": ["selecionar_encomendas", "ver_stock", "confirmar_selecao"],
-      "cargo": "OPERADOR_SEL"
+      "cargo": "OPERDADOR_SEL"
     },
     {
       "nome": "Carlos Almeida",
       "email": "carlos.rec@distrib.pt",
       "password": "rececao202",
       "permissoes": ["registar_rececoes", "ver_fornecedores", "reportar_nc"],
-      "cargo": "OPERADOR_REC"
+      "cargo": "OPERDADOR_REC"
     },
     {
       "nome": "Rita Oliveira",
       "email": "rita.sel@distrib.pt",
       "password": "rita303",
       "permissoes": ["selecionar_encomendas", "ver_stock"],
-      "cargo": "OPERADOR_SEL"
+      "cargo": "OPERDADOR_SEL"
     },
     {
       "nome": "Miguel Sousa",
       "email": "miguel.arm@distrib.pt",
       "password": "arm404",
       "permissoes": ["gerir_stock"],
-      "cargo": "OPERADOR_ARM"
+      "cargo": "OPERDADOR_ARM"
     },
     {
       "nome": "Sofia Rodrigues",
       "email": "sofia.rec@distrib.pt",
       "password": "rec505",
       "permissoes": ["registar_rececoes"],
-      "cargo": "OPERADOR_REC"
+      "cargo": "OPERDADOR_REC"
     },
     {
       "nome": "Luís Fernandes",

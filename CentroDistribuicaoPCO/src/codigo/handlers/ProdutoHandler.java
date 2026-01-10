@@ -2,6 +2,7 @@ package codigo.handlers;
 
 import codigo.domain.Produto;
 import codigo.domain.enums.TipoRestricoes;
+import codigo.repositories.ProdutoRepository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,9 +21,11 @@ public class ProdutoHandler {
 
     private InventarioHandler inventarioHandler;
 
+    private ProdutoRepository repo;
 
-    public ProdutoHandler (InventarioHandler inventarioHandler){
+    public ProdutoHandler (InventarioHandler inventarioHandler, ProdutoRepository repo){
         this.inventarioHandler = inventarioHandler;
+        this.repo = repo;
 
     }
 

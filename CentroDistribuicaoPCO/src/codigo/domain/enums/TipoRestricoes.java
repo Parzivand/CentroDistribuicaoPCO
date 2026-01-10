@@ -5,5 +5,6 @@ public enum TipoRestricoes {
     EXIGE_VALIDADE,
     FRAGIL,
     EXPLOSIVO,
-    TOXICO
+    TOXICO,
+    VOLUMOSO
 }
