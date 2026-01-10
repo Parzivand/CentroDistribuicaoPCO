@@ -45,6 +45,7 @@ public class Produto{
     // Getters e Setters
 
     public String getSKU() { return SKU; }
+    public void setSKU(String sku){this.SKU = sku;}
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

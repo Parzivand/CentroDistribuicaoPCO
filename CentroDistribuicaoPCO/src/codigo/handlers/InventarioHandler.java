@@ -16,6 +16,10 @@ public class InventarioHandler {
     private Encomendahandler encomendaHandler;
     private RececaoHandler rececaoHandler;
 
+    public InventarioHandler() {
+    // localizacoes/historico já são inicializados no atributo, então pode ficar vazio
+    }
+
     public InventarioHandler (Encomendahandler encomendahandler, RececaoHandler rececaoHandler){
         this.encomendaHandler = encomendahandler;
         this.rececaoHandler = rececaoHandler;

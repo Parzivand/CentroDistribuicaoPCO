@@ -62,11 +62,11 @@ public class LojaHandler {
         lojas.remove(codigo);
     }
     // mostra a  loja com o respetivo codigo
-    public String verporcodigo(String codigo){
+    public Loja verporcodigo(String codigo){
         if (!lojas.containsKey(codigo.trim().toLowerCase())){
             throw new IllegalArgumentException("essa loja nao existe");
         }
-        return lojas.get(codigo.trim().toLowerCase()).toString();
+        return lojas.get(codigo.trim().toLowerCase());
     }
     // mostra todas as lojas existentes na lista de lojas 
     public HashMap verLojas_registadas(){

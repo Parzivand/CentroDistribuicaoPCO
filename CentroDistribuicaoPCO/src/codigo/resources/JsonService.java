@@ -8,6 +8,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+
+
 /**
  * Simple JSON service for reading and writing JSON files without external dependencies
  */
@@ -49,6 +56,20 @@ public class JsonService {
         String content = new String(Files.readAllBytes(Paths.get(filePath)));
         return fromJson(content, clazz);
     }
+
+    public <T> T readFromClasspath(String path, Class<T> clazz) throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {
+            if (is == null) {
+                throw new FileNotFoundException("Resource not found in classpath: " + path);
+            }
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            return fromJson(content, clazz); // chama o teu método interno de parsing [file:1]
+        }
+    }
+
+
+    
+
     
     /**
      * Read a list of objects from a JSON file
@@ -282,4 +303,44 @@ public class JsonService {
 
     return value;
     }
+
+
+    /** Lê do ficheiro JSON o array que está no campo de topo `fieldName`
+ *  e converte para List<clazz> usando o fromJsonList existente. */
+public <T> List<T> readListFieldFromFile(String filePath, String fieldName, Class<T> clazz) throws IOException {
+    String content = Files.readString(Paths.get(filePath), StandardCharsets.UTF_8);
+    String arrayJson = extractTopLevelArray(content, fieldName);
+    return fromJsonList(arrayJson, clazz); // usa o teu parser de listas [file:1]
+}
+
+/** Extrai o array JSON (incluindo [ ]) do campo fieldName ao nível raiz. */
+private String extractTopLevelArray(String json, String fieldName) throws IOException {
+    String key = "\"" + fieldName + "\"";
+    int keyPos = json.indexOf(key);
+    if (keyPos < 0) throw new IOException("Campo não encontrado: " + fieldName);
+
+    int colon = json.indexOf(':', keyPos + key.length());
+    if (colon < 0) throw new IOException("JSON inválido (sem ':') no campo: " + fieldName);
+
+    int start = json.indexOf('[', colon);
+    if (start < 0) throw new IOException("Campo não é array: " + fieldName);
+
+    int depth = 0;
+    boolean inString = false;
+    for (int i = start; i < json.length(); i++) {
+        char c = json.charAt(i);
+
+        if (c == '"' && (i == 0 || json.charAt(i - 1) != '\\')) inString = !inString;
+        if (inString) continue;
+
+        if (c == '[') depth++;
+        else if (c == ']') {
+            depth--;
+            if (depth == 0) {
+                return json.substring(start, i + 1);
+            }
+        }
+    }
+    throw new IOException("Array não fechado no campo: " + fieldName);
+}
 }

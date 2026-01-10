@@ -1,50 +1,40 @@
 package codigo.app;
-import codigo.app.bootstrap.MasterDataLoader;
+
+import codigo.app.bootstrap.Bootstrap;
 import codigo.handlers.*;
-import codigo.repositories.*;
-import codigo.resources.JsonService;
 
 public class Main {
-
     public static void main(String[] args) {
+        // 1) Carregar JSON (produtos/users/lojas/fornecedores)
+        Bootstrap.initDadosCompletos();
         
-        try {
+        // 2) Criar handlers na ordem que evita o ciclo
+        RececaoHandler rececaoHandler = new RececaoHandler();  // garante que o construtor inicializa rececoes
+        InventarioHandler inventarioHandler = new InventarioHandler(); // novo construtor vazio
 
-            // REPOSITÓRIOS
-            ProdutoRepository produtoRepo = new ProdutoRepository();
-            UtilizadorRepository utilizadorRepo = new UtilizadorRepository();
-            FornecedorRepository fornecedorRepo = new FornecedorRepository();
-            LojaRepository lojaRepo = new LojaRepository();
+        Encomendahandler encomendaHandler = new Encomendahandler(inventarioHandler);
+        inventarioHandler.setEncomendaHandler(encomendaHandler);
+        inventarioHandler.setRececaoHandler(rececaoHandler);
 
-            // HANDLERS
-            ProdutoHandler produtoHandler = new ProdutoHandler(produtoRepo);
-            UtilizadorHandler utilizadorHandler = new UtilizadorHandler(utilizadorRepo);
-            FornecedorHandler fornecedorHandler = new FornecedorHandler(fornecedorRepo);
-            LojaHandler lojaHandler = new LojaHandler(lojaRepo);
+        ExpedicaoHandler expedicaoHandler = new ExpedicaoHandler(encomendaHandler, inventarioHandler);
 
-            // JSON Service
-            JsonService jsonService = new JsonService();
+        // 3) Outros handlers (ajusta conforme os teus construtores reais)
+        ProdutoHandler produtoHandler = new ProdutoHandler(inventarioHandler);
+        UtilizadorHandler utilizadorHandler = new UtilizadorHandler();
+        LojaHandler lojaHandler = new LojaHandler();
+        FornecedorHandler fornecedorHandler = new FornecedorHandler();
 
-            // BOOTSTRAP
-            MasterDataLoader loader = new MasterDataLoader(
-                    jsonService,
-                    produtoHandler,
-                    utilizadorHandler,
-                    fornecedorHandler,
-                    lojaHandler
-            );
-
-            loader.loadAll(); // 🚀 carrega tudo
-
-            System.out.println("\n🔥 Sistema pronto para uso!\n");
-
-            // Aqui começa a tua UI / Menu principal
-            new MenuPrincipal(produtoHandler, lojaHandler, utilizadorHandler).run();
-            
-            
-        } catch (Exception e) {
-            System.err.println("Erro ao iniciar sistema: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // 4) Menu
+        MenuPrincipal menu = new MenuPrincipal(
+                produtoHandler,
+                utilizadorHandler,
+                lojaHandler,
+                fornecedorHandler,
+                inventarioHandler,
+                rececaoHandler,
+                expedicaoHandler,
+                encomendaHandler
+        );
+        menu.run();
     }
 }
