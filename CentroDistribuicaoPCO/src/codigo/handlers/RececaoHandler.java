@@ -1,140 +1,109 @@
 package codigo.handlers;
 
 import codigo.domain.Fornecedor;
+import codigo.domain.LinhaRececao;
 import codigo.domain.Localizacao;
 import codigo.domain.Produto;
 import codigo.domain.Rececao;
 import codigo.domain.enums.TipoRestricoes;
+import codigo.repositories.InventarioRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
-public class  RececaoHandler{
-    private ArrayList<Rececao> rececoes;
+import java.util.List;
 
-    
-    public void criar_Rececao(Fornecedor fornecedor){
-        if(fornecedor== null){
-            throw new IllegalArgumentException("erro de  colocar!");
-        }
-        rececoes.add(new  Rececao(fornecedor)); 
-        }
+public class RececaoHandler {
+    private final List<Rececao> rececoes = new ArrayList<>();
+    private final InventarioRepository inventarioRepository;
 
-    // procura a  rececao  por  id 
-    public String achar_porid(String id){ 
-        for(Rececao rececao: rececoes){
-            if(rececao.getIdRececao()==id){
-                return rececao.toString();
-                
-            }
-         }
-          return null;
+    public RececaoHandler(InventarioRepository inventarioRepository) {
+        this.inventarioRepository = inventarioRepository;
     }
-    //  mostra as rececoes registadas  
-    public ArrayList<Rececao> getrececoes(){
-        if (rececoes.isEmpty()) {
-            System.out.println("nao tem rececoes nenhumas!");
+
+    /** UC06: Cria receção ativa */
+    public void criarRececao(Fornecedor fornecedor) {
+        if (fornecedor == null) {
+            throw new IllegalArgumentException("Fornecedor obrigatório");
         }
+        rececoes.add(new Rececao(fornecedor));
+    }
+
+    /** UC07: Adiciona linha com validação automática */
+    public void adicionarLinhaRececao(Produto produto, String lote, int quantidade, String codigoLocalizacao) {
+        if (produto == null || lote == null || lote.isBlank() || quantidade <= 0) {
+            throw new IllegalArgumentException("Produto, lote e quantidade válidos requeridos");
+        }
+
+        Rececao ultimaRececao = rececoes.getLast();
+        ultimaRececao.adicionarLinha(produto, lote, quantidade);
+
+        // Valida e move para localização
+        Localizacao loc = inventarioRepository.findByCodigo(codigoLocalizacao);
+        if (loc == null) {
+            throw new IllegalArgumentException("Localização não encontrada: " + codigoLocalizacao);
+        }
+
+        int espacoDisponivel = loc.getCapacidadeMaxima() - loc.getQuantidadeTotal(produto);
+        
+        if (produto.getValidade() == null && produto.getRestricoes().contains(TipoRestricoes.EXIGE_VALIDADE)) {
+            ultimaRececao.getLinhas().getLast().setEstado("NC");
+            loc.adicionarquarentena(produto, quantidade);
+        } else if (quantidade > espacoDisponivel) {
+            ultimaRececao.getLinhas().getLast().setEstado("A_ARMAZENAR");
+            loc.adicionar(produto, espacoDisponivel);
+        } else {
+            ultimaRececao.getLinhas().getLast().setEstado("DISPONIVEL");
+            loc.adicionar(produto, quantidade);
+        }
+    }
+
+    /** UC07: Lista NC da receção ativa */
+    public List<LinhaRececao> listarQuarentena() {  // LinhaRececao simples (não Rececao.LinhaRececao)
+        return rececoes.isEmpty() ? new ArrayList<>() : rececoes.getLast().listarProdutosquarentena();
+    }
+
+    /** UC08: Receções por fornecedor */
+    public List<Rececao> filtrarPorFornecedor(Fornecedor fornecedor) {
+        if (fornecedor == null) {
+            throw new IllegalArgumentException("Fornecedor obrigatório");
+        }
+        return rececoes.stream()
+                .filter(r -> r.getFornecedor().equals(fornecedor))
+                .toList();
+    }
+
+    /** UC08: Receções por período */
+    public List<Rececao> filtrarPorPeriodo(LocalDate inicio, LocalDate fim) {
+        if (inicio == null || fim == null || inicio.isAfter(fim)) {
+            throw new IllegalArgumentException("Período inválido");
+        }
+        return rececoes.stream()
+                .filter(r -> !r.getData().isBefore(inicio) && !r.getData().isAfter(fim))
+                .toList();
+    }
+
+    /** UC08: Todas as receções (mais recentes primeiro) */
+    public List<Rececao> listarRececoes() {
         return new ArrayList<>(rececoes.reversed());
     }
 
-    // filtra a lista de rececoes por fornecedor 
-    public ArrayList Filtrarfornecedores(Fornecedor fornecedor){
-        if(fornecedor.equals(null)){
-            throw new  IllegalArgumentException("errou ao colocar um fornecedor!");
+    /** UC06: Resumo da receção ativa */
+    public String resumoRececaoAtual() {
+        if (rececoes.isEmpty()) {
+            return "Nenhuma receção ativa";
         }
-        ArrayList<Rececao> sublista=  new ArrayList<>();
-        for(Rececao rececao: rececoes.reversed()){
-            
-            if(rececao.getFornecedor().equals(fornecedor)){
-                sublista.add(rececao);
-            }
-        }
-        return new ArrayList<>(sublista);
-    }
-     
-    public ArrayList Filtrarperiodo(LocalDate localDate, LocalDate localDate2){
-        ArrayList<Rececao> sublista=  new ArrayList<>();
-        
-        if(localDate==null || localDate2 ==null|| localDate.isAfter(localDate2)){
-            throw new  IllegalArgumentException("faltou alguma data está em falta ou as datas estao trocadas");
-        }
-
-        for(Rececao rececao: rececoes.reversed()){
-            
-            if(rececao.getData().isAfter(localDate) && rececao.getData().isBefore(localDate2)){
-                sublista.add(rececao);
-            }
-            
-        }
-
-        return new ArrayList<>(sublista);
+        Rececao atual = rececoes.getLast();
+        int nc = atual.listarProdutosquarentena().size();
+        return String.format(
+            "Receção %s | Fornecedor: %s | Data: %s | Linhas: %d | NC: %d",
+            atual.getIdRececao(), atual.getFornecedor().getNome(),
+            atual.getData(), atual.getTotalLinhas(), nc
+        );
     }
 
-
-    
-    // para registar  as rececoes ou seja colocar as linhas  e nao conformidades 
-    // como  em cada linha vais ter um produto que pode ou nao ter  nao conformidades 
-    // essa funcao  ta feita para no menu fazermos um while loop que enquanto a resposta for Sim ou Yes 
-    // confinua se for Nao  ou No ela para o loop faz sentido ??? (UC07) 
-    // ah se fores ver as nas rececoes e nao tiver validade é pq podes aceder a validade do produto pela 
-    // validade do produto 
-       public void adicionar_linhas_naoconformidades(Produto produto,int quantidade,String lote,String tipo
-        , String Descricao){
-            if(produto==null || quantidade<0 || lote==null){
-                throw new IllegalArgumentException("falta de informacao no registo da rececao");
-            
-            }else if(produto.getValidade()==null && produto.getRestricoes().contains(TipoRestricoes.EXIGE_VALIDADE)){
-                    rececoes.getLast().getLinhas().getLast().setEstado("NC");
-                    rececoes.getLast().adicionarLinha(produto, lote, quantidade);
-            }else{
-                    rececoes.getLast().adicionarLinha(produto, lote, quantidade);
-                    rececoes.getLast().getLinhas().getLast().setEstado("NORMAL");
-            }
-            rececoes.getLast().getLinhas().getLast().setnaoconformidades(tipo, Descricao);
-        }
-
-        
-        // o produto de uma linha da  rececao  que está a ser registada pode nao ter nao conformidades    
-        public void adicionar_linhas_naoconformidades(Produto produto,int quantidade,String lote,Localizacao localizacao){
-            int espacodisponivel= localizacao.getCapacidadeMaxima()-localizacao.getQuantidade(produto);
-            if(produto==null || quantidade<0 || lote==null){
-                throw new IllegalArgumentException("falta de informacao no registo da rececao");
-            // se a validade tiver  mal  é guardado  em  quarentena 
-            }else if(produto.getValidade()==null && produto.getRestricoes().contains(TipoRestricoes.EXIGE_VALIDADE)){
-                rececoes.getLast().adicionarLinha(produto, lote, quantidade);
-                rececoes.getLast().getLinhas().getLast().setEstado("NC");
-                localizacao.adicionarquarentena(produto, quantidade);
-                // se o produto  tiver  a validade em dia ou nao tenha  validade mas a quantidade a armazenar seja maior que a disponivel na 
-                //localizacao  é colocada em armazenar 
-            }else if(quantidade>espacodisponivel){
-                rececoes.getLast().adicionarLinha(produto, lote, quantidade);
-                localizacao.adicionar(produto, espacodisponivel);
-                rececoes.getLast().getLinhas().getLast().setEstado("A ARMAZENAR");
-                // nao tenha  problemas com a validade nem  com a quantidade é adicionado no  stock a linha fica com estado  de disponivel 
-            }else{
-                rececoes.getLast().adicionarLinha(produto, lote, quantidade);
-                localizacao.adicionar(produto, quantidade);
-                rececoes.getLast().getLinhas().getLast().setEstado("DISPONIVEL");
-            }
-
-            }
-        
-        
-        // nao muda 
-        public String ResumoRegisto(){
-            return String.format("rececao %s\n"+
-            "numero total de itens: %s\n"+
-            "itens com nao conformidades: %s\n"
-            ,rececoes.getLast().getIdRececao(),rececoes.getLast().getLinhas().size(),rececoes.getLast().listarProdutosquarentena());
-        }
-        // mudar para ser no stock da localizacao 
-
-        public boolean produtoTemRececoes(Produto p) {
-            return rececoes.stream()
-                    .flatMap(r -> r.getLinhas().stream())
-                    .anyMatch(l -> l.getProduto().equals(p));
-        }
-
-    
+    /** Verifica se produto tem receções pendentes */
+    public boolean produtoTemRececoes(Produto produto) {
+        return rececoes.stream()
+                .flatMap(r -> r.getLinhas().stream())
+                .anyMatch(l -> l.getProduto().equals(produto));
     }
-
-    
+}

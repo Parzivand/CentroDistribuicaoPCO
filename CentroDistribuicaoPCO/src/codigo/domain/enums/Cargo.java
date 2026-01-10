@@ -6,5 +6,4 @@ public enum Cargo {
     OPERDADOR_ARM,
     OPERDADOR_SEL,
     OPERDADOR_REC, 
-
 }

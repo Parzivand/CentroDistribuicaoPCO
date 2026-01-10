@@ -6,5 +6,6 @@ public enum TipoRestricoes {
     FRAGIL,
     EXPLOSIVO,
     TOXICO,
-    VOLUMOSO
+    VOLUMOSO,
+    FRIO
 }

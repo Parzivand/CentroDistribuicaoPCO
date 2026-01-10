@@ -4,5 +4,8 @@ public enum TipoLocalizacao {
     DOCA,
     FRIGORIFICO,
     SOLO,
-    ESTANTE
+    ESTANTE,
+    ARM_AZEM,
+    SELECAO,
+    RECECAO
 }

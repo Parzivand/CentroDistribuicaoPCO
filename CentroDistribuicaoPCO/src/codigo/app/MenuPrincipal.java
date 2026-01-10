@@ -1,14 +1,9 @@
 package codigo.app;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
-
-import codigo.domain.Utilizador;
-import codigo.domain.enums.Cargo;
-import codigo.domain.enums.TipoRestricoes;
+import codigo.domain.*;
+import codigo.domain.enums.*;
 import codigo.handlers.*;
+import java.util.*;
 
 public class MenuPrincipal {
 
@@ -20,6 +15,7 @@ public class MenuPrincipal {
     private final RececaoHandler rececaoHandler;
     private final ExpedicaoHandler expedicaoHandler;
     private final Encomendahandler encomendaHandler;
+    private final AjusteStockHandler ajusteStockHandler;
 
     public MenuPrincipal(
             ProdutoHandler produtoHandler,
@@ -29,7 +25,8 @@ public class MenuPrincipal {
             InventarioHandler inventarioHandler,
             RececaoHandler rececaoHandler,
             ExpedicaoHandler expedicaoHandler,
-            Encomendahandler encomendaHandler
+            Encomendahandler encomendaHandler,
+            AjusteStockHandler ajusteStockHandler  
     ) {
         this.utilizadores = utilizadorHandler;
         this.lojaHandler = lojaHandler;
@@ -39,6 +36,7 @@ public class MenuPrincipal {
         this.rececaoHandler = rececaoHandler;
         this.expedicaoHandler = expedicaoHandler;
         this.encomendaHandler = encomendaHandler;
+        this.ajusteStockHandler = ajusteStockHandler;
     }
 
     public void run() {
@@ -62,7 +60,6 @@ public class MenuPrincipal {
                     case "sair":
                         sessaoAtiva = false;
                         break;
-
                     default:
                         sessaoAtiva = executarOpcao(sc, u, op);
                         break;
@@ -81,7 +78,6 @@ public class MenuPrincipal {
             System.out.print("Password: ");
             String pass = sc.nextLine();
 
-            // O teu UtilizadorHandler tem listarUtilizadores() [file:7]
             for (Utilizador u : utilizadores.listarUtilizadores()) {
                 if (u.getEmail().equalsIgnoreCase(email) && u.getPassword().equals(pass)) {
                     System.out.println("Bem-vindo, " + u.getNome() + " (" + u.getcargo() + ")");
@@ -104,12 +100,16 @@ public class MenuPrincipal {
                 System.out.println("- registar utilizador");
                 System.out.println("- adicionar loja");
                 System.out.println("- ver lojas");
+                System.out.println("- adicionar fornecedor");
+                System.out.println("- ver fornecedores");
                 System.out.println("- logout");
                 break;
 
             case GESTOR_lOG:
                 System.out.println("- registar encomenda");
                 System.out.println("- consultar por localizacao");
+                System.out.println("- listar encomendas");
+                System.out.println("- cancelar encomenda");
                 System.out.println("- logout");
                 break;
 
@@ -125,7 +125,10 @@ public class MenuPrincipal {
                 break;
 
             case OPERDADOR_ARM:
-                System.out.println("- (por implementar) mover produto / mover expedicao");
+                System.out.println("- mover produto");
+                System.out.println("- mover expedicao");
+                System.out.println("- ajusta Stock");
+                System.out.println("- expede encomenda");
                 System.out.println("- logout");
                 break;
 
@@ -137,7 +140,7 @@ public class MenuPrincipal {
     private boolean executarOpcao(Scanner sc, Utilizador u, String op) {
         Cargo cargo = u.getcargo();
 
-        // ADMIN
+        // ADMINISTRADOR
         if (cargo == Cargo.ADMINISTRADOR) {
             switch (op) {
                 case "criar produto":
@@ -167,9 +170,30 @@ public class MenuPrincipal {
                 case "adicionar loja":
                     adicionarLojaUI(sc);
                     return true;
+                case "adicionar fornecedor":
+                    adicionarFornecedorUI(sc);
+                    return true;
+
+                case "ver fornecedores":
+                    fornecedorHandler.getfornecedores().forEach((k,v) -> System.out.println(k + " | " + v));
+                    return true;
 
                 case "ver lojas":
-                    System.out.println(lojaHandler.verLojas_registadas());
+                    HashMap<String, Loja> lojas = lojaHandler.verLojas_registadas();
+
+                    if (lojas.isEmpty()) {
+                        System.out.println("Nenhuma loja registada.");
+                        return true;
+                    }
+
+                    System.out.println("\n--- LOJAS ---");
+                    lojas.entrySet().stream()
+                            .sorted(Map.Entry.comparingByKey())
+                            .forEach(e -> {
+                                Loja l = e.getValue();
+                                System.out.println(e.getKey() + " | " + l.getNome() + " | " + l.getMorada());
+                            });
+
                     return true;
 
                 default:
@@ -178,14 +202,106 @@ public class MenuPrincipal {
             }
         }
 
-        // Exemplos mínimos para outros cargos (ajusta aos teus handlers)
-        if (cargo == Cargo.OPERDADOR_REC) {
-            if (op.equals("consultar rececoes")) {
-                System.out.println(rececaoHandler.getrececoes());
-                return true;
+        if (cargo == Cargo.OPERDADOR_ARM) {
+            switch (op) {
+                case "mover produto":
+                    moverProdutoUI(sc, u);
+                    return true;
+
+                case "mover expedicao":
+                    moverExpedicaoUI(sc);
+                    return true;
+
+                case "ajustar stock":
+                    ajustarStockUI(sc);
+                    return true;
+
+                case "expede encomenda":
+                    expedirEncomendaUI(sc);
+                    return true;
+
+                default:
+                    System.out.println("Opção inválida.");
+                    return true;
             }
-            System.out.println("Opção inválida.");
-            return true;
+        }
+
+        // OPERDADOR_REC
+        if (cargo == Cargo.OPERDADOR_REC) {
+            switch (op) {
+                case "registar rececao":  
+                    registarRececaoUI(sc);
+                    return true;
+
+                case "consultar rececoes":
+                    List<Rececao> todas = rececaoHandler.listarRececoes();
+                    if (todas.isEmpty()) {
+                        System.out.println("📭 Nenhuma receção registada.");
+                        return true;
+                    }
+
+                    System.out.println("\n📦 RECEÇÕES (mais recentes primeiro):");
+                    for (int i = 0; i < todas.size(); i++) {
+                        Rececao r = todas.get(i);
+                        System.out.printf("\n%d️⃣ %s\n", (i + 1), r.toString());
+                        System.out.printf("   📅 %s | 🏭 %s | 📊 %d linhas | %s%d NC\n", 
+                            r.getData(), r.getFornecedor().getNome(), 
+                            r.getTotalLinhas(), 
+                            r.listarProdutosquarentena().isEmpty() ? "✅ " : "⚠️ ",
+                            r.listarProdutosquarentena().size());
+
+                        // Detalhe 1ª linha (se houver)
+                        if (!r.getLinhas().isEmpty()) {
+                            LinhaRececao linha = r.getLinhas().get(0);
+                            System.out.printf("   📄 %s | %s x%d | %s\n", 
+                                linha.getProduto().getNome(), linha.getLote(), 
+                                linha.getQuantidadeRecebida(), linha.getEstado());
+                        }
+                    }
+                    return true;
+
+                default:
+                    System.out.println("Opção inválida.");
+                    return true;
+            }
+        }
+
+        //  OPERDADOR_SEL 
+        if (cargo == Cargo.OPERDADOR_SEL) {
+            switch (op) {
+                case "preparar expedicao":
+                case "prepara expedicao":
+                    prepararExpedicaoUI(sc);
+                    return true;
+
+                default:
+                    System.out.println("Opção inválida.");
+                    return true;
+            }
+        }
+
+        if (cargo == Cargo.GESTOR_lOG) {
+            switch (op) {
+                case "registar encomenda":
+                    registarEncomendaUI(sc);
+                    return true;
+
+                case "consultar por localizacao":
+                    consultarPorLocalizacaoUI(sc);
+                    return true;
+
+                case "listar encomendas":
+                    listarEncomendasUI();
+                    return true;
+
+                case "cancelar encomenda":
+                    cancelarEncomendaUI(sc);
+                    return true;
+
+                default:
+                    System.out.println("Opção inválida.");
+                    return true;
+            }
         }
 
         System.out.println("Opção inválida.");
@@ -212,41 +328,69 @@ public class MenuPrincipal {
             int mes = lerInt(sc, "Mes (1-12): ");
             int dia = lerInt(sc, "Dia: ");
 
-            // Atenção: Date(ano,mes,dia) é esquisito (ano-1900 e mes 0-11).
-            // Mantém assim por agora, mas ideal é converter de LocalDate.
             Date validade = new Date(ano - 1900, mes - 1, dia);
-
-            produtoHandler.criarProduto(nome, categoria, unidade, restr, validade); // existe [file:10]
+            produtoHandler.criarProduto(nome, categoria, unidade, restr, validade);
         } else {
-            produtoHandler.criarProduto(nome, categoria, unidade, restr); // existe [file:10]
+            produtoHandler.criarProduto(nome, categoria, unidade, restr);
         }
 
         System.out.println("Produto criado.");
     }
 
+    private int paginaAtual = 0;
+
     private void listarProdutosUI(Scanner sc) {
-        int n = 10;
+        int itensPorPagina = 10;
+        
         while (true) {
-            System.out.println(produtoHandler.getProdutos(n)); // existe [file:10]
-            System.out.print("Mais 10? (sim/nao): ");
+            // chama com paginação real (offset)
+            ArrayList<Produto> produtos = produtoHandler.getProdutos(itensPorPagina, paginaAtual);
+            
+            if (produtos.isEmpty()) {
+                System.out.println("Nenhum produto para mostrar.");
+                break;
+            }
+            
+            // UM POR LINHA ✅
+            System.out.println("\n--- Página " + (paginaAtual + 1) + " ---");
+            for (Produto p : produtos) {
+                System.out.println(p.toString());
+            }
+            
+            System.out.print("Mais 10? (sim/nao/voltar): ");
             String r = sc.nextLine().trim().toLowerCase();
-            if (r.startsWith("n")) break;
-            n += 10;
+            
+            if (r.startsWith("n") || r.startsWith("v")) {
+                paginaAtual = 0;  // volta ao início
+                break;
+            }
+            
+            paginaAtual++;  // próxima página
         }
     }
 
     private void registarUtilizadorUI(Scanner sc) {
         System.out.print("Nome: ");
-        String nome = sc.nextLine();
+        String nome = sc.nextLine().trim();
         System.out.print("Email: ");
-        String email = sc.nextLine();
+        String email = sc.nextLine().trim();
         System.out.print("Password: ");
         String pass = sc.nextLine();
-        System.out.print("Cargo (ADMINISTRADOR/GESTOR_LOGISTICO/OPERADOR_ARM/OPERADOR_SELECAO/OPERADOR_RECECAO): ");
-        Cargo cargo = Cargo.valueOf(sc.nextLine().trim().toUpperCase());
 
-        utilizadores.dadosUtilizador(nome, email, pass, cargo); // existe [file:7]
-        System.out.println("Utilizador registado.");
+        System.out.print("Cargo (ADMINISTRADOR/GESTOR_lOG/OPERDADOR_ARM/OPERDADOR_SEL/OPERDADOR_REC): ");
+        String cargoInput = sc.nextLine().trim().toUpperCase();
+
+        Cargo cargo;
+        try {
+            cargo = Cargo.valueOf(cargoInput);
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ Cargo inválido: " + cargoInput);
+            System.out.println("Use exatamente: " + Arrays.toString(Cargo.values()));
+            return;
+        }
+
+        utilizadores.dadosUtilizador(nome, email, pass, cargo);
+        System.out.println("✅ Utilizador registado: " + email + " (" + cargo + ")");
     }
 
     private void adicionarLojaUI(Scanner sc) {
@@ -257,7 +401,7 @@ public class MenuPrincipal {
         System.out.print("Morada: ");
         String morada = sc.nextLine();
 
-        lojaHandler.adicionarLoja(nome, area, morada); // existe [file:11]
+        lojaHandler.adicionarLoja(nome, area, morada);
         System.out.println("Loja adicionada.");
     }
 
@@ -283,4 +427,267 @@ public class MenuPrincipal {
             }
         }
     }
+
+    private void moverProdutoUI(Scanner sc, Utilizador u) {
+    try {
+        System.out.print("Localização origem: ");
+        String origem = sc.nextLine().trim();
+
+        System.out.print("Localização destino: ");
+        String destino = sc.nextLine().trim();
+
+        System.out.print("SKU: ");
+        String sku = sc.nextLine().trim();
+
+        Produto p = produtoHandler.procurarPorSku(sku);
+        if (p == null) {
+            System.out.println("❌ Produto não encontrado.");
+            return;
+        }
+
+        int qtd = lerInt(sc, "Quantidade: ");
+
+        System.out.print("Estado (DISPONIVEL/QUARENTENA): ");
+        estadoStock estado = estadoStock.valueOf(sc.nextLine().trim().toUpperCase());
+
+        inventarioHandler.moverProduto(origem, destino, p, qtd, estado, u.getEmail());
+        System.out.println("✅ Produto movido.");
+        } catch (Exception e) {
+            System.out.println("❌ Erro: " + e.getMessage());
+        }
+    }
+
+    private void moverExpedicaoUI(Scanner sc) {
+        try {
+            System.out.print("ID da expedição: ");
+            String id = sc.nextLine().trim();
+
+            System.out.print("Nova localização: ");
+            String novaLoc = sc.nextLine().trim();
+
+            expedicaoHandler.moverExpedicao(id, novaLoc);
+            System.out.println("✅ Expedição movida.");
+        } catch (Exception e) {
+            System.out.println("❌ Erro: " + e.getMessage());
+        }
+    }
+
+    private void ajustarStockUI(Scanner sc) {
+        try {
+            System.out.print("SKU: ");
+            String sku = sc.nextLine().trim();
+
+            System.out.print("Código da localização: ");
+            String codLoc = sc.nextLine().trim();
+
+            Localizacao loc = inventarioHandler.getLocalizacaoPorCodigo(codLoc);
+            if (loc == null) {
+                System.out.println("❌ Localização não encontrada.");
+                return;
+            }
+
+            int qtdAjuste = lerInt(sc, "Quantidade a ajustar: ");
+
+            ajusteStockHandler.CriarAjusteStock(sku, loc, qtdAjuste);
+            System.out.println("✅ Ajuste de stock proposto.");
+        } catch (Exception e) {
+            System.out.println("❌ Erro: " + e.getMessage());
+        }
+    }
+
+    private void expedirEncomendaUI(Scanner sc) {
+        try {
+            System.out.print("Referência da encomenda: ");
+            String ref = sc.nextLine().trim();
+
+            System.out.print("Localização inicial: ");
+            String loc = sc.nextLine().trim();
+
+            expedicaoHandler.prepararExpedicao(ref, loc);
+            System.out.println("✅ Encomenda expedida (expedição criada).");
+        } catch (Exception e) {
+            System.out.println("❌ Não foi possível expedir: " + e.getMessage());
+        }
+    }
+
+    private void registarRececaoUI(Scanner sc) {
+        try {
+            System.out.print("Email do fornecedor: ");
+            String email = sc.nextLine().trim().toUpperCase();
+            Fornecedor fornecedor = fornecedorHandler.getfornecedores().get(email);
+            if (fornecedor == null) {
+                System.out.println("❌ Fornecedor não encontrado.");
+                return;
+            }
+
+            rececaoHandler.criarRececao(fornecedor);  // ✅ NOVO
+
+            while (true) {
+                System.out.print("SKU do produto (ou 'fim'): ");
+                String sku = sc.nextLine().trim();
+                if (sku.equalsIgnoreCase("fim")) break;
+
+                Produto p = produtoHandler.procurarPorSku(sku);
+                if (p == null) continue;
+
+                int qtd = lerInt(sc, "Quantidade: ");
+                System.out.print("Lote: ");
+                String lote = sc.nextLine().trim();
+                System.out.print("Código da localização: ");
+                String codLoc = sc.nextLine().trim();
+
+                rececaoHandler.adicionarLinhaRececao(p, lote, qtd, codLoc);  // ✅ NOVO
+
+                System.out.print("Mais linhas? (s/n): ");
+                if (!sc.nextLine().trim().toLowerCase().startsWith("s")) break;
+            }
+
+            System.out.println(rececaoHandler.resumoRececaoAtual());  // ✅ NOVO
+        } catch (Exception e) {
+            System.out.println("❌ " + e.getMessage());
+        }
+    }
+
+    private void prepararExpedicaoUI(Scanner sc) {
+        try {
+            System.out.println("📦 Encomendas disponíveis:");
+            boolean temPronta = false;
+
+            for (Encomenda enc : encomendaHandler.listarEncomendas()) {
+                if (enc.getEstado() == EstadoEncomenda.POR_PREPARAR) {
+                    System.out.println("✅ " + enc.toString());
+                    temPronta = true;
+                } else {
+                    System.out.println("⏳ " + enc.toString() + " (estado: " + enc.getEstado() + ")");
+                }
+            }
+
+            if (!temPronta) {
+                System.out.println("❌ Nenhuma encomenda no estado POR_PREPARAR.");
+                return;
+            }
+
+            System.out.print("Referência da encomenda: ");
+            String ref = sc.nextLine().trim();
+
+            Encomenda enc = encomendaHandler.getEncomenda(ref);
+            if (enc == null) {
+                System.out.println("❌ Encomenda não encontrada.");
+                return;
+            }
+
+            System.out.print("Localização inicial: ");
+            String loc = sc.nextLine().trim();
+
+            Expedicao exp = expedicaoHandler.prepararExpedicao(ref, loc);
+            System.out.println("✅ Expedição criada com sucesso!");
+            System.out.println("Expedição: " + exp);
+            System.out.println("Encomenda agora em estado EXPEDIDA.");
+
+        } catch (Exception e) {
+            System.out.println("❌ Erro ao preparar expedição: " + e.getMessage());
+        }
+    }
+
+    private void registarEncomendaUI(Scanner sc) {
+        try {
+            System.out.print("Código da loja (ex: LIS001): ");
+            String codLoja = sc.nextLine().trim().toLowerCase();
+
+            Loja loja = lojaHandler.verLojas_registadas().get(codLoja);
+            if (loja == null) {
+                System.out.println("❌ Loja não encontrada.");
+                return;
+            }
+
+            int prioridade = lerInt(sc, "Prioridade (1..5): ");
+            String ref = encomendaHandler.criarEncomenda(loja, prioridade);
+            System.out.println("✅ Encomenda criada: " + ref);
+
+            while (true) {
+                System.out.print("SKU (ou 'fim'): ");
+                String sku = sc.nextLine().trim();
+                if (sku.equalsIgnoreCase("fim")) break;
+
+                Produto p = produtoHandler.procurarPorSku(sku);
+                if (p == null) {
+                    System.out.println("❌ Produto não encontrado.");
+                    continue;
+                }
+
+                int qtd = lerInt(sc, "Quantidade: ");
+                encomendaHandler.adicionarLinhaEncomenda(ref, p, qtd);
+
+                System.out.println(encomendaHandler.resumoEncomenda(ref));
+                System.out.print("Mais linhas? (s/n): ");
+                if (!sc.nextLine().trim().toLowerCase().startsWith("s")) break;
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Erro: " + e.getMessage());
+        }
+    }
+    
+    private void consultarPorLocalizacaoUI(Scanner sc) {
+        try {
+            System.out.print("Código da localização (ex: ARM0001): ");
+            String codLoc = sc.nextLine().trim().toUpperCase();
+
+            int pagina = 0;
+            while (true) {
+                List<Map.Entry<Produto, Integer>> itens =
+                        inventarioHandler.consultarPorLocalizacao(codLoc, pagina);
+
+                if (itens.isEmpty()) {
+                    if (pagina == 0) System.out.println("Sem stock nessa localização.");
+                    break;
+                }
+
+                System.out.println("\n--- " + codLoc + " | Página " + (pagina + 1) + " ---");
+                for (Map.Entry<Produto, Integer> e : itens) {
+                    Produto p = e.getKey();
+                    System.out.println(p.getSKU() + " | " + p.getNome() + " | qtd=" + e.getValue());
+                }
+
+                System.out.print("Próxima página? (s/n): ");
+                if (!sc.nextLine().trim().toLowerCase().startsWith("s")) break;
+                pagina++;
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Erro: " + e.getMessage());
+        }
+    }
+
+    private void listarEncomendasUI() {
+        System.out.println("\n📦 ENCOMENDAS:");
+        for (Encomenda e : encomendaHandler.listarEncomendas()) {
+            System.out.println("- " + e);
+        }
+    }
+
+    private void cancelarEncomendaUI(Scanner sc) {
+        try {
+            System.out.print("Referência: ");
+            String ref = sc.nextLine().trim();
+            encomendaHandler.cancelarEncomenda(ref);
+            System.out.println("✅ Encomenda cancelada e reservas libertadas.");
+        } catch (Exception e) {
+            System.out.println("❌ Erro: " + e.getMessage());
+        }
+    }
+
+    private void adicionarFornecedorUI(Scanner sc) {
+        System.out.print("Nome: ");
+        String nome = sc.nextLine().trim();
+
+        System.out.print("Email: ");
+        String email = sc.nextLine().trim();
+
+        System.out.print("Telefone: ");
+        String tel = sc.nextLine().trim();
+
+        fornecedorHandler.adicionarFornecedor(nome, email, tel);
+        System.out.println("✅ Fornecedor criado: " + email);
+    }
+
+
 }

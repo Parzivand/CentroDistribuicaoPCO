@@ -1,19 +1,18 @@
 package codigo.handlers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.Set;
-
 import codigo.domain.AjusteStock;
 import codigo.domain.Localizacao;
 import codigo.domain.Produto;
+import java.util.HashMap;
+import java.util.Scanner;
+import java.util.Set;
 
 
 public class AjusteStockHandler {
     HashMap<String,AjusteStock> ajustesStockpropostos= new HashMap();
     private RececaoHandler rececaoHandler;    
     private ExpedicaoHandler expedicaoHandler;
+    
     
     public AjusteStockHandler(RececaoHandler rececaoHandler, ExpedicaoHandler expedicaoHandler){
         this.expedicaoHandler= expedicaoHandler;

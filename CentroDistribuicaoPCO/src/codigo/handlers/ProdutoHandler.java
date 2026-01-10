@@ -3,157 +3,127 @@ package codigo.handlers;
 import codigo.domain.Produto;
 import codigo.domain.enums.TipoRestricoes;
 import codigo.repositories.ProdutoRepository;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
+import java.util.*;
 
 public class ProdutoHandler {
 
-    // Mapa SKU -> Produto
+    // SKU -> Produto (mantém só para gerar SKU/contadores e para paginação ordenada)
     private final Map<String, Produto> produtos = new TreeMap<>();
-
-    // Mapa categoria -> último número usado
     private final Map<String, Integer> contadoresPorCategoria = new HashMap<>();
 
     private InventarioHandler inventarioHandler;
+    private final ProdutoRepository repo;
 
-    private ProdutoRepository repo;
-
-    public ProdutoHandler (InventarioHandler inventarioHandler, ProdutoRepository repo){
+    public ProdutoHandler(InventarioHandler inventarioHandler, ProdutoRepository repo) {
         this.inventarioHandler = inventarioHandler;
+        if (repo == null) throw new IllegalArgumentException("ProdutoRepository não pode ser null");
         this.repo = repo;
 
+        // “hidrata” cache local com o que já estiver no repo (ex.: vindo do JSON)
+        for (Produto p : repo.findAll()) {
+            produtos.put(p.getSKU(), p);
+            // atualiza contador por categoria para evitar repetir SKUs
+            String cat = normalizarCategoria(p.getCategoria());
+            int num = extrairNumeroSku(p.getSKU());
+            contadoresPorCategoria.put(cat, Math.max(contadoresPorCategoria.getOrDefault(cat, 0), num));
+        }
     }
 
+    private int extrairNumeroSku(String sku) {
+        // Ex: ALI-0000010 -> 10
+        try {
+            String[] parts = sku.split("-");
+            return Integer.parseInt(parts[1]);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 
-    /**
-     * Normaliza e valida a categoria.
-     * - trim
-     * - maiúsculas
-     * - exatamente 3 letras A-Z
-     */
     private String normalizarCategoria(String categoria) {
-        if (categoria == null) {
-            throw new IllegalArgumentException("Categoria não pode ser null.");
-        }
-
+        if (categoria == null) throw new IllegalArgumentException("Categoria não pode ser null.");
         String cat = categoria.trim().toUpperCase();
-
-        // garante exatamente 3 letras maiúsculas
-        if (!cat.matches("[A-Z]{3}")) { // 3 letras A-Z
-            throw new IllegalArgumentException(
-                    "Categoria inválida (esperado 3 letras A-Z). Valor recebido: " + cat
-            );
+        if (!cat.matches("[A-Z]{3}")) {
+            throw new IllegalArgumentException("Categoria inválida (esperado 3 letras A-Z). Valor recebido: " + cat);
         }
-
         return cat;
     }
 
-    /**
-     * Gera o próximo SKU para uma categoria no formato CAT-0000000.
-     */
     private String proximoSkuParaCategoria(String categoria) {
         String cat = normalizarCategoria(categoria);
-
         int atual = contadoresPorCategoria.getOrDefault(cat, 0) + 1;
         contadoresPorCategoria.put(cat, atual);
-
         return String.format("%s-%07d", cat, atual);
     }
 
-    /**
-     * Cria e regista um novo produto com validade.
-     * SKU é gerado automaticamente a partir da categoria.
-     */
-    public Produto criarProduto(String nome,
-                                String categoria,
-                                String unidadeMedida,
-                                List<TipoRestricoes> restricoes,
-                                Date validade) {
+    public Produto criarProduto(String nome, String categoria, String unidadeMedida,
+                               List<TipoRestricoes> restricoes, Date validade) {
+
+        if (nome == null || categoria == null || unidadeMedida == null || restricoes == null) {
+            throw new IllegalArgumentException("Tem alguma informação em falta!");
+        }
 
         String skuGerado = proximoSkuParaCategoria(categoria);
 
-        // segurança extra: garante unicidade
-        if (produtos.containsKey(skuGerado)) {
+        // garante unicidade também no repo
+        if (repo.existsBySku(skuGerado) || produtos.containsKey(skuGerado)) {
             throw new IllegalStateException("SKU já existente: " + skuGerado);
         }
 
-        // verifica se tem alguma informacao  em falta        
-        if(nome==null || categoria==null || unidadeMedida==null|| restricoes==null){
-            throw new IllegalArgumentException("tem alguma informacão em falta!"); 
-        }
-
-        // categoria já vem normalizada dentro do SKU, mas podes guardar cat normalizado também
         String catNormalizada = normalizarCategoria(categoria);
-
         Produto p = new Produto(nome, skuGerado, unidadeMedida, restricoes, validade, catNormalizada);
+
+        // salva em ambos (repo + cache ordenada)
+        repo.save(p);
         produtos.put(p.getSKU(), p);
+
         return p;
     }
 
-    
+    public Produto criarProduto(String nome, String categoria, String unidadeMedida, List<TipoRestricoes> restricoes) {
+        return criarProduto(nome, categoria, unidadeMedida, restricoes, null);
+    }
 
     public void removerProduto(String sku) {
-
         Produto p = produtos.get(sku);
-        if (p == null)
-            throw new IllegalArgumentException("Produto não existe");
+        if (p == null) throw new IllegalArgumentException("Produto não existe");
 
-        if (!inventarioHandler.podeRemoverProduto(p))
-            throw new IllegalStateException(
-                "Produto não pode ser removido — possui stock ou reservas."
-            );
+        if (inventarioHandler != null && !inventarioHandler.podeRemoverProduto(p)) {
+            throw new IllegalStateException("Produto não pode ser removido — possui stock ou reservas.");
+        }
 
         produtos.remove(sku);
+        // (opcional) remover do repo também: seria ideal criar repo.deleteBySku(sku)
+        // por agora só remove da cache para não aparecer no menu
     }
-    
+
     public void setInventarioHandler(InventarioHandler inv) {
         this.inventarioHandler = inv;
     }
 
-    /**
-     * Cria e regista um novo produto sem validade (validade = null).
-     */
-    public Produto criarProduto(String nome,
-                                String categoria,
-                                String unidadeMedida,
-                                List<TipoRestricoes> restricoes) {
-        return criarProduto(nome, categoria, unidadeMedida, restricoes, null);
-    }
-
-    /**
-     * Obtém um produto pelo SKU.
-     */
     public Produto procurarPorSku(String sku) {
-        return produtos.get(sku);
+        Produto p = produtos.get(sku);
+        if (p != null) return p;
+        return repo.findBySku(sku).orElse(null);
     }
 
-    /**
-     * Verifica se já existe um produto com o SKU dado.
-     */
     public boolean existeSku(String sku) {
-        return produtos.containsKey(sku);
+        return produtos.containsKey(sku) || repo.existsBySku(sku);
     }
 
-    /**
-     * Devolve uma cópia do mapa de produtos.
-     */
-    
-    public ArrayList<Produto>  getProdutos(int valor) { 
-   // criei uma lista com todos os valores do Map para que se possa  mostrar todos os valores de 10 em 10 caso
-   // seja solicitado
-   ArrayList<Produto> mostrar_produtos = new ArrayList<>();
-   mostrar_produtos.addAll(produtos.values());
-   if(valor>mostrar_produtos.size()-1){
-    System.out.println(mostrar_produtos);
-    throw new IndexOutOfBoundsException("demasiado  grande o valor\n");
-   }
-        return new ArrayList(mostrar_produtos.subList(0, valor)); 
+    public ArrayList<Produto> getProdutos(int pageSize, int pageNumber) {
+        ArrayList<Produto> todos = new ArrayList<>(produtos.values());
+        
+        int start = pageSize * pageNumber;
+        if (start >= todos.size()) {
+            return new ArrayList<>();
+        }
+        
+        int end = Math.min(start + pageSize, todos.size());
+        return new ArrayList<>(todos.subList(start, end));
+    }
+
+    // Mantém compatibilidade com o teu MenuPrincipal atual (se chama getProdutos(10))
+    public ArrayList<Produto> getProdutos(int valor) {
+        return getProdutos(valor, 0);  // primeira página
     }
 }
-    
-
