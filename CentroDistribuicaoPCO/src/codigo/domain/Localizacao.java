@@ -1,30 +1,83 @@
 package codigo.domain;
 
+import codigo.domain.enums.TipoLocalizacao;
+import codigo.domain.enums.TipoRestricoes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import codigo.domain.enums.TipoLocalizacao;
-import codigo.domain.enums.TipoRestricoes;
 
+/**
+ * Localização física no armazém com gestão completa de inventário.
+ * 
+ * <p><strong>Tipos suportados:</strong> {@link TipoLocalizacao} (ESTANTE, SOLO, DOCA, etc.)</p>
+ * 
+ * <p><strong>Inventário composto por:</strong></p>
+ * <ul>
+ *   <li><strong>stock:</strong> Produtos disponíveis</li>
+ *   <li><strong>quarentena:</strong> Produtos NC (não conformes)</li>
+ *   <li><strong>stockReservado:</strong> Produtos reservados para encomendas</li>
+ * </ul>
+ * 
+ * <p><strong>UCs suportadas:</strong> Receções (UC07), Ajustes (UC09), Reservas (UC10)</p>
+ */
 public class Localizacao {
 
-    // Atributos básicos
-    
-    private TipoLocalizacao tipo; // estante, solo, frigorifico...
-    private int capacidadeMaxima; 
-    private ArrayList<TipoRestricoes> restricoesSuportadas; // frio, perigoso...
-    private  String codigo;
-    // Inventário desta localização: Produto -> quantidade
-    private final Map<Produto,Integer> stock = new HashMap<>();
-    private Map<Produto,Integer> quarentena= new HashMap<>();
-    private Map<Produto, Integer> stockReservado = new HashMap<>();
-    
+    // =====================================================================
+    // ATRIBUTOS BÁSICOS
+    // =====================================================================
 
-    // Construtor
-    public Localizacao(String codigo, TipoLocalizacao tipo, int capacidadeMaxima, ArrayList<TipoRestricoes> restricoesSuportadas) {
+    /**
+     * Tipo físico da localização (ESTANTE, SOLO, DOCA, etc.).
+     */
+    private TipoLocalizacao tipo;
+    
+    /**
+     * Capacidade máxima total em unidades.
+     */
+    private int capacidadeMaxima;
+    
+    /**
+     * Restrições suportadas por este tipo de localização.
+     */
+    private ArrayList<TipoRestricoes> restricoesSuportadas;
+    
+    /**
+     * Código único da localização (ex: "ARM0001", "SEL0001").
+     */
+    private String codigo;
+
+    // =====================================================================
+    // INVENTÁRIO (3 mapas independentes)
+    // =====================================================================
+
+    /**
+     * Stock disponível para picking (não reservado).
+     */
+    private final Map<Produto, Integer> stock = new HashMap<>();
+    
+    /**
+     * Produtos em quarentena (NC - não conformes).
+     */
+    private Map<Produto, Integer> quarentena = new HashMap<>();
+    
+    /**
+     * Stock reservado para encomendas pendentes.
+     */
+    private Map<Produto, Integer> stockReservado = new HashMap<>();
+
+    /**
+     * Construtor completo da localização.
+     * 
+     * @param codigo                Código único (ex: "ARM0001")
+     * @param tipo                  Tipo físico (ESTANTE, SOLO, DOCA)
+     * @param capacidadeMaxima      Capacidade total em unidades
+     * @param restricoesSuportadas  Restrições suportadas (pode ser null → lista vazia)
+     */
+    public Localizacao(String codigo, TipoLocalizacao tipo, int capacidadeMaxima, 
+                      ArrayList<TipoRestricoes> restricoesSuportadas) {
         this.codigo = codigo;
         this.tipo = tipo;
         this.capacidadeMaxima = capacidadeMaxima;
@@ -32,39 +85,107 @@ public class Localizacao {
         this.stockReservado = new HashMap<>(); 
     }
 
-    // Métodos de inventário
+    // =====================================================================
+    // CONSULTAS DE STOCK
+    // =====================================================================
+
+    /**
+     * Quantidade disponível no stock principal (não quarentena).
+     * 
+     * @param produto Produto a consultar
+     * @return Quantidade ou 0 se não existir
+     */
     public int getQuantidade(Produto produto) {
         return stock.getOrDefault(produto, 0);
     }
+
+    /**
+     * Quantidade total = stock + quarentena.
+     * 
+     * @param produto Produto a consultar
+     * @return Soma das quantidades
+     */
     public int getQuantidadeTotal(Produto produto) {
-        return getQuantidade(produto) + getQuantidadequarentena(produto);
+        return getQuantidade(produto) + getQuantidadeQuarentena(produto);
     }
-    
+
+    /**
+     * Quantidade em quarentena (NC).
+     * 
+     * @param produto Produto a consultar
+     * @return Quantidade em quarentena ou 0
+     */
+    public int getQuantidadeQuarentena(Produto produto) {
+        return quarentena.getOrDefault(produto, 0);
+    }
+
+    /**
+     * Quantidade reservada para encomendas.
+     * 
+     * @param produto Produto a consultar
+     * @return Quantidade reservada ou 0
+     */
+    public int getReservado(Produto produto) {
+        return stockReservado.getOrDefault(produto, 0);
+    }
+
+    /**
+     * Stock fisicamente disponível = stock - reservado.
+     * 
+     * @param produto Produto a consultar
+     * @return Quantidade disponível para novo picking
+     */
+    public int getQuantidadeDisponivel(Produto produto) {
+        return getQuantidade(produto) - getReservado(produto);
+    }
+
+    // =====================================================================
+    // OPERAÇÕES DE STOCK (UC07 Receções)
+    // =====================================================================
+
+    /**
+     * Adiciona ao stock principal (valida compatibilidade).
+     * 
+     * @param produto   Produto a adicionar
+     * @param quantidade Quantidade (> 0)
+     * @throws IllegalArgumentException se quantidade inválida ou incompatibilidade
+     */
     public void adicionar(Produto produto, int quantidade) {
-           
         if (quantidade <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser > 0");
         }
-              
+        
         verificarCompatibilidade(produto);
-
         int atual = getQuantidade(produto);
         stock.put(produto, atual + quantidade);
     }
-    public void adicionarquarentena(Produto produto, int quantidade) {
+
+    /**
+     * Adiciona à quarentena (NC).
+     * 
+     * @param produto   Produto em quarentena
+     * @param quantidade Quantidade (> 0)
+     * @throws IllegalArgumentException se quantidade inválida ou incompatibilidade
+     */
+    public void adicionarQuarentena(Produto produto, int quantidade) {
         if (quantidade <= 0) throw new IllegalArgumentException("Quantidade deve ser > 0");
 
-        if (!verificarCompatibilidade(produto)) {
-            throw new IllegalArgumentException("Localização não suporta restrições do produto");
-        }
+        verificarCompatibilidade(produto);
 
-        int atual = getQuantidadequarentena(produto); // <-- era getQuantidade(produto)
+        int atual = getQuantidadeQuarentena(produto);
         quarentena.put(produto, atual + quantidade);
     }
 
+    /**
+     * Remove da quarentena (validação de stock).
+     * 
+     * @param produto   Produto a remover
+     * @param quantidade Quantidade a remover
+     * @throws IllegalArgumentException se quantidade inválida ou insuficiente
+     */
     public void removerQuarentena(Produto produto, int quantidade) {
         if (quantidade <= 0) throw new IllegalArgumentException("Quantidade deve ser > 0");
-        int atual = getQuantidadequarentena(produto);
+        int atual = getQuantidadeQuarentena(produto);
         if (quantidade > atual) throw new IllegalArgumentException("Quantidade a remover maior que a existente");
 
         int novo = atual - quantidade;
@@ -72,6 +193,13 @@ public class Localizacao {
         else quarentena.put(produto, novo);
     }
 
+    /**
+     * Remove do stock principal (validação de stock).
+     * 
+     * @param produto   Produto a remover
+     * @param quantidade Quantidade a remover
+     * @throws IllegalArgumentException se quantidade inválida ou insuficiente
+     */
     public void remover(Produto produto, int quantidade) {
         if (quantidade <= 0) {
             throw new IllegalArgumentException("Quantidade deve ser > 0");
@@ -88,40 +216,54 @@ public class Localizacao {
         }
     }
 
-    public Map<Produto, Integer> getStock() {
-        return Collections.unmodifiableMap(stock);
-    }
-    public Map<Produto, Integer> getQuarentena() {
-        return Collections.unmodifiableMap(quarentena);
-    }
-    
+    // =====================================================================
+    // VALIDAÇÕES DE COMPATIBILIDADE (UC07)
+    // =====================================================================
+
     /**
-     * Verifica se esta localização suporta todas as restrições do produto.
+     * Verifica se a localização suporta todas as restrições do produto.
+     * 
+     * @param produto Produto a validar
+     * @return true se compatível
+     * @throws IllegalArgumentException se incompatível
      */
     public boolean verificarCompatibilidade(Produto produto) { 
         List<TipoRestricoes> restricoesProduto = produto.getRestricoes();
-     
+    
         for (TipoRestricoes restricao : restricoesProduto) {
-            if (!suportaRestricao(restricao)){
-                return false;
-            }   
+            if (!suportaRestricao(restricao)) {
+                throw new IllegalArgumentException(
+                    String.format("Localização %s não suporta %s", codigo, restricao));
+            }
         }
         return true;
     }
-   
+
     /**
-     * Verifica se esta localização suporta uma restrição específica.
+     * Verifica suporte a restrição específica.
+     * 
+     * @param restricao Restrição a verificar
+     * @return true se suportada
      */
     private boolean suportaRestricao(TipoRestricoes restricao) { 
         return restricoesSuportadas.contains(restricao);
-        }
+    }
 
-    
-    // UC09: Reservar stock (sem consumir disponível)
+    // =====================================================================
+    // OPERAÇÕES DE RESERVA (UC09-10)
+    // =====================================================================
+
+    /**
+     * Reserva stock para encomenda (não consome fisicamente).
+     * 
+     * @param produto   Produto a reservar
+     * @param quantidade Quantidade a reservar
+     * @throws IllegalArgumentException se stock insuficiente
+     */
     public void reservarStock(Produto produto, int quantidade) {
         if (quantidade <= 0) throw new IllegalArgumentException("Quantidade inválida");
         
-        int disponivel = getQuantidade(produto) - getReservado(produto);
+        int disponivel = getQuantidadeDisponivel(produto);
         if (disponivel < quantidade) {
             throw new IllegalArgumentException("Stock disponível insuficiente: " + disponivel);
         }
@@ -129,17 +271,13 @@ public class Localizacao {
         stockReservado.put(produto, getReservado(produto) + quantidade);
     }
 
-    // UC09: Stock disponível real (disponível - reservado)
-    public int getQuantidadeDisponivel(Produto produto) {
-        return getQuantidade(produto) - getReservado(produto);
-    }
-
-    // UC09: Quanto está reservado
-    public int getReservado(Produto produto) {
-        return stockReservado.getOrDefault(produto, 0);
-    }
-
-    // UC09: Libertar reserva (cancelar encomenda)
+    /**
+     * Liberta reserva (cancelamento de encomenda).
+     * 
+     * @param produto   Produto a libertar
+     * @param quantidade Quantidade a libertar
+     * @throws IllegalArgumentException se reserva insuficiente
+     */
     public void libertarReserva(Produto produto, int quantidade) {
         int reservado = getReservado(produto);
         if (reservado < quantidade) {
@@ -151,7 +289,13 @@ public class Localizacao {
         }
     }
 
-    // UC10: Consumir reserva (preparar expedição)
+    /**
+     * Consome reserva durante expedição (remove fisicamente).
+     * 
+     * @param produto   Produto a consumir
+     * @param quantidade Quantidade a consumir
+     * @throws IllegalArgumentException se reserva ou stock insuficiente
+     */
     public void consumirReserva(Produto produto, int quantidade) {
         if (quantidade <= 0) {
             throw new IllegalArgumentException("Quantidade inválida");
@@ -164,7 +308,6 @@ public class Localizacao {
 
         int stockAtual = getQuantidade(produto);
         if (stockAtual < quantidade) {
-            // Isto NUNCA devia acontecer se a reserva estiver correta
             throw new IllegalStateException("Stock físico inconsistente");
         }
 
@@ -185,42 +328,121 @@ public class Localizacao {
         }
     }
 
-
+    /**
+     * Verifica se há reserva suficiente para picking.
+     * 
+     * @param produto   Produto a verificar
+     * @param quantidade Quantidade necessária
+     * @return true se reserva >= quantidade
+     */
     public boolean temReservaSuficiente(Produto produto, int quantidade) {
         return getReservado(produto) >= quantidade;
     }
 
+    // =====================================================================
+    // GETTERS BÁSICOS (visão geral)
+    // =====================================================================
 
-    // Getters/Setters básicos
+    /**
+     * Código único da localização.
+     */
+    public String getCodigo() { 
+        return codigo; 
+    }
 
-    public String getCodigo() { return codigo; }
-    public void setCodigo(String codigo) { this.codigo = codigo; }
+    /**
+     * Atualiza código (excepcional).
+     */
+    public void setCodigo(String codigo) { 
+        this.codigo = codigo; 
+    }
 
-    public TipoLocalizacao getTipo() { return tipo; }
-    public void setTipo(TipoLocalizacao tipo) { this.tipo = tipo; }
+    /**
+     * Tipo físico da localização.
+     */
+    public TipoLocalizacao getTipo() { 
+        return tipo; 
+    }
 
-    public int getCapacidadeMaxima() { return capacidadeMaxima; }
-    public void setCapacidadeMaxima(int capacidadeMaxima) { this.capacidadeMaxima = capacidadeMaxima; }
+    /**
+     * Atualiza tipo.
+     */
+    public void setTipo(TipoLocalizacao tipo) { 
+        this.tipo = tipo; 
+    }
 
-    public List<TipoRestricoes> getRestricoesSuportadas() { return restricoesSuportadas; }
-    // altera as restricoes que suporta
-    public void addRestricoesSuportadas(TipoRestricoes restricoesSuportadas) { this.restricoesSuportadas.add(restricoesSuportadas); }
-    public void removeRestricoesSuportadas(TipoRestricoes restricoesSuportadas) { this.restricoesSuportadas.remove(restricoesSuportadas); }
+    /**
+     * Capacidade máxima total.
+     */
+    public int getCapacidadeMaxima() { 
+        return capacidadeMaxima; 
+    }
 
+    /**
+     * Atualiza capacidade.
+     */
+    public void setCapacidadeMaxima(int capacidadeMaxima) { 
+        this.capacidadeMaxima = capacidadeMaxima; 
+    }
+
+    /**
+     * Lista de restrições suportadas.
+     */
+    public List<TipoRestricoes> getRestricoesSuportadas() { 
+        return restricoesSuportadas; 
+    }
+
+    /**
+     * Adiciona nova restrição suportada.
+     */
+    public void addRestricoesSuportadas(TipoRestricoes restricao) { 
+        this.restricoesSuportadas.add(restricao); 
+    }
+
+    /**
+     * Remove restrição suportada.
+     */
+    public void removeRestricoesSuportadas(TipoRestricoes restricao) { 
+        this.restricoesSuportadas.remove(restricao); 
+    }
+
+    /**
+     * Vista imutável do stock reservado.
+     */
     public Map<Produto, Integer> getStockReservado() {
         return Collections.unmodifiableMap(stockReservado);
     }
-    public int getQuantidadequarentena (Produto produto){
-        return quarentena.getOrDefault(produto, 0);
+
+    /**
+     * Vista imutável do stock principal.
+     */
+    public Map<Produto, Integer> getStock() {
+        return Collections.unmodifiableMap(stock);
     }
 
+    /**
+     * Vista imutável da quarentena.
+     */
+    public Map<Produto, Integer> getQuarentena() {
+        return Collections.unmodifiableMap(quarentena);
+    }
 
+    // =====================================================================
+    // OVERRIDES
+    // =====================================================================
+
+    /**
+     * Representação resumida para UI.
+     */
     @Override
     public String toString() {
         return String.format("Localizacao{codigo='%s', tipo='%s', cap=%d, restricoes='%s', stock=%d itens}",
-            codigo, tipo, capacidadeMaxima, restricoesSuportadas, stock.size());
+                codigo, tipo, capacidadeMaxima, restricoesSuportadas, stock.size());
     }
 
+    /**
+     * Igualdade baseada no código único.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -229,6 +451,9 @@ public class Localizacao {
         return Objects.equals(codigo, that.codigo);
     }
 
+    /**
+     * Hashcode baseado no código.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(codigo);    

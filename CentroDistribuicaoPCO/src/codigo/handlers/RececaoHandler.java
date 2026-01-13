@@ -35,7 +35,7 @@ public class RececaoHandler {
 
         Rececao ultimaRececao = rececoes.getLast();
         ultimaRececao.adicionarLinha(produto, lote, quantidade);
-
+    
         // Valida e move para localização
         Localizacao loc = inventarioRepository.findByCodigo(codigoLocalizacao);
         if (loc == null) {
@@ -46,7 +46,7 @@ public class RececaoHandler {
         
         if (produto.getValidade() == null && produto.getRestricoes().contains(TipoRestricoes.EXIGE_VALIDADE)) {
             ultimaRececao.getLinhas().getLast().setEstado("NC");
-            loc.adicionarquarentena(produto, quantidade);
+            loc.adicionarQuarentena(produto, quantidade);
         } else if (quantidade > espacoDisponivel) {
             ultimaRececao.getLinhas().getLast().setEstado("A_ARMAZENAR");
             loc.adicionar(produto, espacoDisponivel);
@@ -58,7 +58,7 @@ public class RececaoHandler {
 
     /** UC07: Lista NC da receção ativa */
     public List<LinhaRececao> listarQuarentena() {  // LinhaRececao simples (não Rececao.LinhaRececao)
-        return rececoes.isEmpty() ? new ArrayList<>() : rececoes.getLast().listarProdutosquarentena();
+        return rececoes.isEmpty() ? new ArrayList<>() : rececoes.getLast().listarProdutosQuarentena();
     }
 
     /** UC08: Receções por fornecedor */
@@ -92,7 +92,7 @@ public class RececaoHandler {
             return "Nenhuma receção ativa";
         }
         Rececao atual = rececoes.getLast();
-        int nc = atual.listarProdutosquarentena().size();
+        int nc = atual.listarProdutosQuarentena().size();
         return String.format(
             "Receção %s | Fornecedor: %s | Data: %s | Linhas: %d | NC: %d",
             atual.getIdRececao(), atual.getFornecedor().getNome(),

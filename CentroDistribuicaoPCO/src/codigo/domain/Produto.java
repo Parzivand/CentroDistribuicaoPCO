@@ -1,31 +1,60 @@
 package codigo.domain;
 
+import codigo.domain.enums.TipoRestricoes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import codigo.domain.enums.TipoRestricoes;
-import codigo.domain.enums.TipoLocalizacao;
+/**
+ * Produto registado no catálogo do armazém.
+ * 
+ * <p><strong>Identificador único:</strong> SKU formato CAT-0000000 (categoria + sequencial).</p>
+ * <p><strong>Categoria:</strong> 3 letras maiúsculas (COM, ELE, ROU, etc.).</p>
+ * 
+ * <p><strong>Uso:</strong> Receções (UC07), Encomendas (UC11), Inventário (UC09).</p>
+ */
+public class Produto {
 
+    // =====================================================================
+    // ATRIBUTOS
+    // =====================================================================
 
-public class Produto{
-
-    // Atributos
-   
+    /** Nome comercial do produto */
     private String nome;
-    private String SKU;             // CAT-0000000
-    private String unidadeMedida;   // ex.: "kg", "unidade", "litro"
-    private String categoria;       // ex.: "COM = comida", "ELE = eletronico", "ROU = roupa"
+    
+    /** SKU único (CAT-0000000) */
+    private String SKU;
+    
+    /** Unidade de medida (kg, un, litro) */
+    private String unidadeMedida;
+    
+    /** Categoria (3 letras: COM, ELE, ROU) */
+    private String categoria;
+    
+    /** Data de validade (pode ser null) */
     private Date validade;
 
-    private final List<TipoRestricoes> restricoes = new ArrayList<>();  // Lista de restrições (ex.: "frio", "perigoso", "validadeObrigatoria")
+    /** Restrições de armazenamento (imutável externamente) */
+    private final List<TipoRestricoes> restricoes = new ArrayList<>();
 
-    // Construtores
+    // =====================================================================
+    // CONSTRUTORES
+    // =====================================================================
 
+    /**
+     * Construtor completo com validade.
+     * 
+     * @param nome           Nome do produto
+     * @param SKU            Código único (CAT-0000000)
+     * @param unidadeMedida  Unidade (kg, un, litro)
+     * @param restricoes     Lista de restrições (pode ser null)
+     * @param validade       Data de validade (pode ser null)
+     * @param categoria      Categoria (3 letras)
+     */
     public Produto(String nome, String SKU, String unidadeMedida,
-                   List<TipoRestricoes> restricoes,Date validade, String categoria) {
+                   List<TipoRestricoes> restricoes, Date validade, String categoria) {
         this.nome = nome;
         this.SKU = SKU;
         this.unidadeMedida = unidadeMedida;
@@ -36,54 +65,104 @@ public class Produto{
         this.categoria = categoria;
     }
 
+    /**
+     * Construtor sem validade (chama sobrecarga).
+     * 
+     * @param nome           Nome do produto
+     * @param SKU            Código único
+     * @param unidadeMedida  Unidade de medida
+     * @param restricoes     Lista de restrições
+     * @param categoria      Categoria (3 letras)
+     */
     public Produto(String nome, String SKU, String unidadeMedida,
                    List<TipoRestricoes> restricoes, String categoria) {
-        this(nome, SKU, unidadeMedida, restricoes, null ,categoria);
-        
+        this(nome, SKU, unidadeMedida, restricoes, null, categoria);
     }
 
-    // Getters e Setters
+    // =====================================================================
+    // GETTERS E SETTERS
+    // =====================================================================
 
+    /** SKU único do produto */
     public String getSKU() { return SKU; }
-    public void setSKU(String sku){this.SKU = sku;}
+    
+    /** Atualiza SKU (excepcional) */
+    public void setSKU(String sku) { this.SKU = sku; }
 
+    /** Nome comercial */
     public String getNome() { return nome; }
+    
+    /** Atualiza nome */
     public void setNome(String nome) { this.nome = nome; }
 
+    /** Unidade de medida */
     public String getUnidadeMedida() { return unidadeMedida; }
+    
+    /** Atualiza unidade */
     public void setUnidadeMedida(String unidadeMedida) { this.unidadeMedida = unidadeMedida; }
 
-    
     /**
-     * Devolve lista imutável para não alterarem as restrições por fora.
+     * Lista imutável de restrições.
+     * 
+     * @return Cópia defensiva das restrições
      */
     public List<TipoRestricoes> getRestricoes() {
         return Collections.unmodifiableList(restricoes);
     }
 
-    // compara de acordo com o SkU para posteriormente ser usado na ordenacao alfabetica no Handler 
-    public int compareTo(Produto o){
-        return this.SKU.compareTo(o.SKU);
-    } 
+    /** Data de validade */
+    public Date getValidade() { return validade; }
     
+    /** Atualiza validade */
+    public void setValidade(Date validade) { this.validade = validade; }
+
+    /** Categoria (3 letras) */
+    public String getCategoria() { return categoria; }
+    
+    /** Atualiza categoria */
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    // =====================================================================
+    // OPERAÇÕES SOBRE RESTRIÇÕES
+    // =====================================================================
+
+    /**
+     * Adiciona restrição (evita duplicados).
+     * 
+     * @param restricao Nova restrição
+     */
     public void adicionarRestricao(TipoRestricoes restricao) {
         if (restricao != null && !restricoes.contains(restricao)) {
             restricoes.add(restricao);
         }
     }
 
+    /**
+     * Remove restrição específica.
+     * 
+     * @param restricao Restrição a remover
+     */
     public void removerRestricao(TipoRestricoes restricao) {
         restricoes.remove(restricao);
     }
 
-    public Date getValidade() { return validade; }
-    public void setValidade(Date validade) { this.validade = validade; }
+    /**
+     * Comparação lexicográfica por SKU (para ordenação).
+     * 
+     * @param o Outro produto
+     * @return Resultado da comparação SKU
+     */
+    public int compareTo(Produto o) {
+        return this.SKU.compareTo(o.SKU);
+    }
 
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+    // =====================================================================
+    // OVERRIDES (identificação por SKU)
+    // =====================================================================
 
-    // equals / hashCode (por SKU, que deve ser único)
-
+    /**
+     * Igualdade baseada no SKU único.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,13 +171,17 @@ public class Produto{
         return Objects.equals(SKU, produto.SKU);
     }
 
+    /**
+     * Hashcode baseado no SKU.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(SKU);
     }
 
-    // toString
-
+    /**
+     * Representação legível (inclui validade se existente).
+     */
     @Override
     public String toString() {
         String base = String.format(
@@ -110,5 +193,4 @@ public class Produto{
         }
         return base + String.format(" validade: %s", validade);
     }
-
 }

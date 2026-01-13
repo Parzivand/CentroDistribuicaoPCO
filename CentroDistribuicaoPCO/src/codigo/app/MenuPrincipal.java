@@ -5,8 +5,17 @@ import codigo.domain.enums.*;
 import codigo.handlers.*;
 import java.util.*;
 
+/**
+ * Classe principal da aplicação que implementa um menu interativo em consola
+ * com autenticação por utilizador e autorização baseada em cargo.
+ * Orquestra todos os handlers de negócio através de uma interface de texto.
+ */
 public class MenuPrincipal {
 
+    /**
+     * Handlers de negócio injetados no construtor.
+     * Cada handler encapsula um sub-sistema específico da aplicação.
+     */
     private final ProdutoHandler produtoHandler;
     private final UtilizadorHandler utilizadores;
     private final LojaHandler lojaHandler;
@@ -17,6 +26,20 @@ public class MenuPrincipal {
     private final Encomendahandler encomendaHandler;
     private final AjusteStockHandler ajusteStockHandler;
 
+    /**
+     * Construtor que recebe todos os handlers necessários.
+     * Realiza injeção de dependências para desacoplar MenuPrincipal da lógica de negócio.
+     *
+     * @param produtoHandler     Handler para gestão de produtos
+     * @param utilizadorHandler  Handler para gestão de utilizadores
+     * @param lojaHandler        Handler para gestão de lojas
+     * @param fornecedorHandler  Handler para gestão de fornecedores
+     * @param inventarioHandler  Handler para gestão de inventário
+     * @param rececaoHandler     Handler para receções de mercadoria
+     * @param expedicaoHandler   Handler para expedições
+     * @param encomendaHandler   Handler para encomendas
+     * @param ajusteStockHandler Handler para ajustes de stock
+     */
     public MenuPrincipal(
             ProdutoHandler produtoHandler,
             UtilizadorHandler utilizadorHandler,
@@ -26,7 +49,7 @@ public class MenuPrincipal {
             RececaoHandler rececaoHandler,
             ExpedicaoHandler expedicaoHandler,
             Encomendahandler encomendaHandler,
-            AjusteStockHandler ajusteStockHandler  
+            AjusteStockHandler ajusteStockHandler
     ) {
         this.utilizadores = utilizadorHandler;
         this.lojaHandler = lojaHandler;
@@ -39,6 +62,10 @@ public class MenuPrincipal {
         this.ajusteStockHandler = ajusteStockHandler;
     }
 
+    /**
+     * Ponto de entrada principal da aplicação.
+     * Executa o ciclo de autenticação + menu até logout ou saída.
+     */
     public void run() {
         Scanner sc = new Scanner(System.in);
 
@@ -68,6 +95,13 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * Autentica um utilizador através de email e password.
+     * Permite múltiplas tentativas até "sair".
+     *
+     * @param sc Scanner para ler input do utilizador
+     * @return Utilizador autenticado ou null se cancelar
+     */
     private Utilizador autenticar(Scanner sc) {
         while (true) {
             System.out.println("\n=== LOGIN ===");
@@ -88,6 +122,12 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * Mostra o menu de opções específico para cada {@link Cargo}.
+     * Cada cargo vê apenas as opções para as quais está autorizado.
+     *
+     * @param cargo Cargo do utilizador autenticado
+     */
     private void mostrarMenu(Cargo cargo) {
         System.out.println("\n=== MENU (" + cargo + ") ===");
 
@@ -137,6 +177,15 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * Roteador central que executa a opção escolhida pelo utilizador.
+     * Verifica autorização baseada no cargo e delega para o método UI adequado.
+     *
+     * @param sc   Scanner para input
+     * @param u    Utilizador autenticado
+     * @param op   Opção escolhida (em minúsculas)
+     * @return true se deve continuar a sessão, false para sair
+     */
     private boolean executarOpcao(Scanner sc, Utilizador u, String op) {
         Cargo cargo = u.getcargo();
 
@@ -245,17 +294,17 @@ public class MenuPrincipal {
                         Rececao r = todas.get(i);
                         System.out.printf("\n%d️⃣ %s\n", (i + 1), r.toString());
                         System.out.printf("   📅 %s | 🏭 %s | 📊 %d linhas | %s%d NC\n", 
-                            r.getData(), r.getFornecedor().getNome(), 
-                            r.getTotalLinhas(), 
-                            r.listarProdutosquarentena().isEmpty() ? "✅ " : "⚠️ ",
-                            r.listarProdutosquarentena().size());
+                                r.getData(), r.getFornecedor().getNome(), 
+                                r.getTotalLinhas(), 
+                                r.listarProdutosQuarentena().isEmpty() ? "✅ " : "⚠️ ",
+                                r.listarProdutosQuarentena().size());
 
                         // Detalhe 1ª linha (se houver)
                         if (!r.getLinhas().isEmpty()) {
                             LinhaRececao linha = r.getLinhas().get(0);
                             System.out.printf("   📄 %s | %s x%d | %s\n", 
-                                linha.getProduto().getNome(), linha.getLote(), 
-                                linha.getQuantidadeRecebida(), linha.getEstado());
+                                    linha.getProduto().getNome(), linha.getLote(), 
+                                    linha.getQuantidadeRecebida(), linha.getEstado());
                         }
                     }
                     return true;
@@ -266,7 +315,7 @@ public class MenuPrincipal {
             }
         }
 
-        //  OPERDADOR_SEL 
+        // OPERDADOR_SEL 
         if (cargo == Cargo.OPERDADOR_SEL) {
             switch (op) {
                 case "preparar expedicao":
@@ -308,6 +357,12 @@ public class MenuPrincipal {
         return true;
     }
 
+    /**
+     * Interface de utilizador para criação de produto.
+     * Recolhe dados interativamente e chama {@link ProdutoHandler#criarProduto}.
+     *
+     * @param sc Scanner para input do utilizador
+     */
     private void criarProdutoUI(Scanner sc) {
         System.out.print("Nome: ");
         String nome = sc.nextLine();
@@ -337,8 +392,18 @@ public class MenuPrincipal {
         System.out.println("Produto criado.");
     }
 
+    /**
+     * Estado da paginação atual para listagem de produtos.
+     * É mantido entre chamadas para permitir navegação.
+     */
     private int paginaAtual = 0;
 
+    /**
+     * Interface paginada para listagem de produtos.
+     * Mostra 10 produtos por página, permite navegação sequencial.
+     *
+     * @param sc Scanner para input do utilizador
+     */
     private void listarProdutosUI(Scanner sc) {
         int itensPorPagina = 10;
         
@@ -369,6 +434,12 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * Interface para registo de novo utilizador.
+     * Valida o cargo através de valueOf.
+     *
+     * @param sc Scanner para input
+     */
     private void registarUtilizadorUI(Scanner sc) {
         System.out.print("Nome: ");
         String nome = sc.nextLine().trim();
@@ -393,6 +464,11 @@ public class MenuPrincipal {
         System.out.println("✅ Utilizador registado: " + email + " (" + cargo + ")");
     }
 
+    /**
+     * Interface para criação de nova loja.
+     *
+     * @param sc Scanner para input
+     */
     private void adicionarLojaUI(Scanner sc) {
         System.out.print("Nome: ");
         String nome = sc.nextLine();
@@ -405,17 +481,30 @@ public class MenuPrincipal {
         System.out.println("Loja adicionada.");
     }
 
+    /**
+     * Interface interativa para recolha de restrições de produto.
+     *
+     * @param sc Scanner para input
+     * @return Lista de {@link TipoRestricoes} definidas pelo utilizador
+     */
     private List<TipoRestricoes> lerRestricoes(Scanner sc) {
         List<TipoRestricoes> restr = new ArrayList<>();
         int n = lerInt(sc, "Quantas restrições? ");
         for (int i = 0; i < n; i++) {
-            System.out.print("Restrição #" + (i + 1) + " (ex: FRIO, PERIGOSO, TOXICO...): ");
+            System.out.print("Restrição #" + (i + 1) + " (ex: FRIO, FRAGIL, TOXICO, EXPLOSIVO, VOLUMOSO, TEMPERATURA...): ");
             String r = sc.nextLine().trim().toUpperCase();
             restr.add(TipoRestricoes.valueOf(r));
         }
         return restr;
     }
 
+    /**
+     * Lê um inteiro do utilizador com validação de input.
+     *
+     * @param sc Scanner para input
+     * @param prompt Mensagem a mostrar
+     * @return Inteiro válido lido
+     */
     private int lerInt(Scanner sc, String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -428,35 +517,46 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * UI para movimentação de produto entre localizações.
+     *
+     * @param sc Scanner para input
+     * @param u  Utilizador autenticado (para audit trail)
+     */
     private void moverProdutoUI(Scanner sc, Utilizador u) {
-    try {
-        System.out.print("Localização origem: ");
-        String origem = sc.nextLine().trim();
+        try {
+            System.out.print("Localização origem: ");
+            String origem = sc.nextLine().trim();
 
-        System.out.print("Localização destino: ");
-        String destino = sc.nextLine().trim();
+            System.out.print("Localização destino: ");
+            String destino = sc.nextLine().trim();
 
-        System.out.print("SKU: ");
-        String sku = sc.nextLine().trim();
+            System.out.print("SKU: ");
+            String sku = sc.nextLine().trim();
 
-        Produto p = produtoHandler.procurarPorSku(sku);
-        if (p == null) {
-            System.out.println("❌ Produto não encontrado.");
-            return;
-        }
+            Produto p = produtoHandler.procurarPorSku(sku);
+            if (p == null) {
+                System.out.println("❌ Produto não encontrado.");
+                return;
+            }
 
-        int qtd = lerInt(sc, "Quantidade: ");
+            int qtd = lerInt(sc, "Quantidade: ");
 
-        System.out.print("Estado (DISPONIVEL/QUARENTENA): ");
-        estadoStock estado = estadoStock.valueOf(sc.nextLine().trim().toUpperCase());
+            System.out.print("Estado (DISPONIVEL/QUARENTENA): ");
+            estadoStock estado = estadoStock.valueOf(sc.nextLine().trim().toUpperCase());
 
-        inventarioHandler.moverProduto(origem, destino, p, qtd, estado, u.getEmail());
-        System.out.println("✅ Produto movido.");
+            inventarioHandler.moverProduto(origem, destino, p, qtd, estado, u.getEmail());
+            System.out.println("✅ Produto movido.");
         } catch (Exception e) {
             System.out.println("❌ Erro: " + e.getMessage());
         }
     }
 
+    /**
+     * UI para movimentação de expedição para nova localização.
+     *
+     * @param sc Scanner para input
+     */
     private void moverExpedicaoUI(Scanner sc) {
         try {
             System.out.print("ID da expedição: ");
@@ -472,6 +572,11 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * UI para criar ajuste de stock.
+     *
+     * @param sc Scanner para input
+     */
     private void ajustarStockUI(Scanner sc) {
         try {
             System.out.print("SKU: ");
@@ -495,6 +600,11 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * UI para preparar expedição de encomenda.
+     *
+     * @param sc Scanner para input
+     */
     private void expedirEncomendaUI(Scanner sc) {
         try {
             System.out.print("Referência da encomenda: ");
@@ -510,6 +620,12 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * UI completa para registo de receção.
+     * Cria receção → adiciona múltiplas linhas → mostra resumo.
+     *
+     * @param sc Scanner para input
+     */
     private void registarRececaoUI(Scanner sc) {
         try {
             System.out.print("Email do fornecedor: ");
@@ -520,7 +636,7 @@ public class MenuPrincipal {
                 return;
             }
 
-            rececaoHandler.criarRececao(fornecedor);  // ✅ NOVO
+            rececaoHandler.criarRececao(fornecedor);  
 
             while (true) {
                 System.out.print("SKU do produto (ou 'fim'): ");
@@ -548,6 +664,12 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * UI para preparar expedição por operador de seleção.
+     * Lista encomendas POR_PREPARAR e cria expedição.
+     *
+     * @param sc Scanner para input
+     */
     private void prepararExpedicaoUI(Scanner sc) {
         try {
             System.out.println("📦 Encomendas disponíveis:");
@@ -589,6 +711,12 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * UI para registo de nova encomenda.
+     * Cria encomenda vazia → adiciona linhas → mostra resumo.
+     *
+     * @param sc Scanner para input
+     */
     private void registarEncomendaUI(Scanner sc) {
         try {
             System.out.print("Código da loja (ex: LIS001): ");
@@ -627,6 +755,11 @@ public class MenuPrincipal {
         }
     }
     
+    /**
+     * UI paginada para consulta de stock por localização.
+     *
+     * @param sc Scanner para input
+     */
     private void consultarPorLocalizacaoUI(Scanner sc) {
         try {
             System.out.print("Código da localização (ex: ARM0001): ");
@@ -657,6 +790,9 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * Lista todas as encomendas registadas.
+     */
     private void listarEncomendasUI() {
         System.out.println("\n📦 ENCOMENDAS:");
         for (Encomenda e : encomendaHandler.listarEncomendas()) {
@@ -664,6 +800,11 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * UI para cancelamento de encomenda.
+     *
+     * @param sc Scanner para input
+     */
     private void cancelarEncomendaUI(Scanner sc) {
         try {
             System.out.print("Referência: ");
@@ -675,6 +816,11 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * UI para criação de novo fornecedor.
+     *
+     * @param sc Scanner para input
+     */
     private void adicionarFornecedorUI(Scanner sc) {
         System.out.print("Nome: ");
         String nome = sc.nextLine().trim();
@@ -688,6 +834,4 @@ public class MenuPrincipal {
         fornecedorHandler.adicionarFornecedor(nome, email, tel);
         System.out.println("✅ Fornecedor criado: " + email);
     }
-
-
 }

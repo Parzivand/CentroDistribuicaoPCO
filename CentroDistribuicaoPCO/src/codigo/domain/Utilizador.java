@@ -1,8 +1,5 @@
 package codigo.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import codigo.domain.enums.Cargo;
 
 public class Utilizador{
@@ -37,8 +34,4 @@ public class Utilizador{
     public Cargo getcargo() { return cargo; }
     public void setPassword(Cargo cargo) { this.cargo = cargo; }
     
-
-    
-    
-
 }

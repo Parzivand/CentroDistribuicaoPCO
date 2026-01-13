@@ -94,7 +94,7 @@ public class InventarioHandler {
         int disponivel = 0;
 
         for (Localizacao l : localizacoes) {
-            total += l.getQuantidade(p) + l.getQuantidadequarentena(p);
+            total += l.getQuantidade(p) + l.getQuantidadeQuarentena(p);
             reservado += l.getReservado(p);
             disponivel += l.getQuantidadeDisponivel(p);
         }
@@ -137,7 +137,7 @@ public class InventarioHandler {
             destino.adicionar(produto, qtd);
         } else {
             origem.removerQuarentena(produto, qtd);
-            destino.adicionarquarentena(produto, qtd);
+            destino.adicionarQuarentena(produto, qtd);
         }
 
         historico.add(new Movimentacao(
@@ -193,7 +193,7 @@ public class InventarioHandler {
     public boolean temStockAtivo(Produto p) {
         for (Localizacao l : localizacoes) {
             if (l.getQuantidade(p) > 0) return true;
-            if (l.getQuantidadequarentena(p) > 0) return true;
+            if (l.getQuantidadeQuarentena(p) > 0) return true;
             if (l.getReservado(p) > 0) return true;
         }
         return false;
